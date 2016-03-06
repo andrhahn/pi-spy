@@ -5,24 +5,18 @@ Camera functions for Raspberry Pi
 ### Getting Started
 
 ##### Setup
-    Install NodeJS
-    Create Amazon S3 account
+    sudo apt-get update
+    sudo apt-get upgrade
+    sudo rpi-update
+    sudo reboot
+
+    sudo apt-get install python-picamera
     
-##### Commands
-    Install: npm install grunt-cli -g && npm install bower -g && bower install && npm install
-    Build: grunt build
-    Deploy to S3: grunt deploy
-    Run webserver: node server.js
-
-### Environment variables
-#### Grunt - build
-    API_HOST: http://localhost:1337
-
-#### Grunt - deploy
-    API_HOST: <rest api server uri>
-    S3_ACCESS_KEY_ID: <S3 account information>
-    S3_SECRET_ACCESS_KEY: <S3 account information>
-    S3_BUCKET_NAME: <S3 account information>
+    sudo apt-get install netatalk
+    sudo apt-get install avahi-daemon
+    
+    npm install grunt-cli -g
+    npm install
 
 ### License
 
