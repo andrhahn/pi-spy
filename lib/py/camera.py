@@ -34,7 +34,6 @@ def detect_motion(camera):
         return result
 
 def write_video(stream):
-    # Write the entire content of the circular buffer to disk
     with io.open('before.h264', 'wb') as output:
         for frame in stream.frames:
             if frame.header:
@@ -62,17 +61,14 @@ with picamera.PiCamera() as camera:
     try:
         while True:
             camera.wait_recording(1)
+
             if detect_motion(camera):
                 print('Motion detected!')
 
-                # As soon as we detect motion, split the recording to record the frames "after" motion
                 camera.split_recording('after.h264')
 
-                # Write the 10 seconds "before" motion to disk as well
                 write_video(stream)
 
-                # Wait until motion is no longer detected, then split
-                # recording back to the in-memory circular buffer
                 while detect_motion(camera):
                     camera.wait_recording(1)
 
