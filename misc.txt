@@ -4,6 +4,12 @@ sudo raspi-config
 
 ssh pi@raspberrypi.local
 
-scp pi@raspberrypi.local:~/video.h264 ~ && open -a vlc video.h264
+scp ~/projects/pi-spy/lib/camera.py pi@raspberrypi.local:~
+
+python camera.py
+
+scp pi@raspberrypi.local:~/before.h264 ~ && open -a vlc before.h264
+
+scp pi@raspberrypi.local:~/after.h264 ~ && open -a vlc after.h264
 
 omxplayer 2014-02-11_10.24.18.h264 -o hdmi

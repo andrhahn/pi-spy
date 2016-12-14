@@ -11,9 +11,15 @@ previous_image_data = None
 
 def changed(a, b):
     #return ImageChops.difference(im1, im2).getbbox() is not None
+
+    print a.shape
+    print b.shape
+
     return (np.abs(a.astype(np.int16) - b.astype(np.int16)) > threshold).any()
 
 def detect_motion(camera):
+    print 'entered detect_motion method...'
+
     global previous_image_data
 
     stream = io.BytesIO()
@@ -23,10 +29,14 @@ def detect_motion(camera):
     stream.seek(0)
 
     if previous_image_data is None:
+        print 'no previous image..'
+
         previous_image_data = np.fromstring(stream.getvalue(), dtype=np.uint8)
 
         return False
     else:
+        print 'checking if changed...'
+
         current_image_data = np.fromstring(stream.getvalue(), dtype=np.uint8)
 
         result = changed(current_image_data, previous_image_data)
@@ -58,9 +68,13 @@ with picamera.PiCamera() as camera:
 
     camera.resolution = (1280, 720)
 
+    print 'starting camera...'
+
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
 
     camera.start_recording(stream, format='h264')
+
+    print 'started recording...'
 
     try:
         while True:
