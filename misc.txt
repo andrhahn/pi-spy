@@ -1,0 +1,9 @@
+pi/raspberry
+
+sudo raspi-config
+
+ssh pi@raspberrypi.local
+
+scp pi@raspberrypi.local:~/video.h264 ~ && open -a vlc video.h264
+
+omxplayer 2014-02-11_10.24.18.h264 -o hdmi

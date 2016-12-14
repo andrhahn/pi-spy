@@ -3,12 +3,14 @@
 import io
 import picamera
 import numpy as np
+from time import sleep
 
 threshold = 10
 
 previous_image_data = None
 
 def changed(a, b):
+    #return ImageChops.difference(im1, im2).getbbox() is not None
     return (np.abs(a.astype(np.int16) - b.astype(np.int16)) > threshold).any()
 
 def detect_motion(camera):
@@ -52,6 +54,8 @@ def write_video(stream):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
+    sleep(2)
+
     camera.resolution = (1280, 720)
 
     stream = picamera.PiCameraCircularIO(camera, seconds=10)

@@ -1,22 +1,19 @@
 # pi-spy
 
-Camera functions for Raspberry Pi
+Camera functions for Raspberry Pi 3 Model B
 
 ### Getting Started
 
 ##### Setup
-    sudo apt-get update
-    sudo apt-get upgrade
-    sudo rpi-update
-    sudo reboot
-
-    sudo apt-get install python-picamera
+    sudo apt update
     
-    sudo apt-get install netatalk
-    sudo apt-get install avahi-daemon
+    sudo apt full-upgrade
     
-    npm install grunt-cli -g
-    npm install
+    sudo apt install netatalk
+    
+    sudo apt install avahi-daemon
+    
+    curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - && sudo apt install nodejs
 
 ### License
 
