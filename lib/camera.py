@@ -2,25 +2,25 @@
 
 import io
 import picamera
-import numpy as np
+import ImageChops
+import math, operator
+from PIL import Image
 from time import sleep
 
-threshold = 10
+threshold = 100
 
-previous_image_data = None
+prior_image = None
 
-def changed(a, b):
-    #return ImageChops.difference(im1, im2).getbbox() is not None
-
-    print a.shape
-    print b.shape
-
-    return (np.abs(a.astype(np.int16) - b.astype(np.int16)) > threshold).any()
+def calculateRms(im1, im2):
+    diff = ImageChops.difference(im1, im2)
+    h = diff.histogram()
+    sq = (value*((idx%256)**2) for idx, value in enumerate(h))
+    sum_of_squares = sum(sq)
+    rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
+    return rms
 
 def detect_motion(camera):
-    print 'entered detect_motion method...'
-
-    global previous_image_data
+    global prior_image
 
     stream = io.BytesIO()
 
@@ -28,20 +28,22 @@ def detect_motion(camera):
 
     stream.seek(0)
 
-    if previous_image_data is None:
-        print 'no previous image..'
-
-        previous_image_data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+    if prior_image is None:
+        prior_image = Image.open(stream)
 
         return False
     else:
-        print 'checking if changed...'
+        current_image = Image.open(stream)
 
-        current_image_data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+        rms = calculateRms(current_image, prior_image) > threshold
 
-        result = changed(current_image_data, previous_image_data)
+        if rms > threshold:
+            print 'motion detected!'
+            result = True
+        else:
+            result = False
 
-        previous_image_data = current_image_data
+        prior_image = current_image
 
         return result
 
@@ -68,29 +70,23 @@ with picamera.PiCamera() as camera:
 
     camera.resolution = (1280, 720)
 
-    print 'starting camera...'
-
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
 
-    camera.start_recording(stream, format='h264')
+    print 'starting recording...'
 
-    print 'started recording...'
+    camera.start_recording(stream, format='h264')
 
     try:
         while True:
             camera.wait_recording(1)
 
             if detect_motion(camera):
-                print('Motion detected!')
-
                 camera.split_recording('after.h264')
 
                 write_video(stream)
 
                 while detect_motion(camera):
                     camera.wait_recording(1)
-
-                print('Motion stopped!')
 
                 camera.split_recording(stream)
     finally:
