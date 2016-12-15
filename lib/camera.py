@@ -35,7 +35,7 @@ def detect_motion(camera):
     else:
         current_image = Image.open(stream)
 
-        rms = calculateRms(current_image, prior_image) > threshold
+        rms = calculateRms(current_image, prior_image)
 
         if rms > threshold:
             print 'motion detected!'
