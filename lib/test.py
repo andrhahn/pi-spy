@@ -1,10 +1,24 @@
 #!/usr/bin/python
 
 import math, operator
+import numpy as np
 from PIL import Image
 from PIL import ImageChops
 
 threshold = 100
+
+def compare(a, b, threshold=10):
+    # Ensure a and b are types which won't overflow on subtraction
+    a = a.astype(np.int16)
+    b = b.astype(np.int16)
+    # Create an array from the absolute difference of a and b
+    c = np.abs(a - b)
+    # Create an array of truth values indicating whether any
+    # absolute differences are greater than the threshold
+    c = c > threshold
+    # Return whether any values are greater than the threshold
+
+    return c.any()
 
 def calculateRms(im1, im2):
     diff = ImageChops.difference(im1, im2)
@@ -18,9 +32,4 @@ def hello():
     image1 = Image.open("file1.jpg")
     image2 = Image.open("file2.jpg")
 
-    rms = calculateRms(image1, image2)
-
-    if rms > threshold:
-        print 'motion detected!'
-    else:
-        print 'no motion detected!'
+    print compare(np.array(image1), np.array(image2))
