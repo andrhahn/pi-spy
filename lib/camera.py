@@ -2,12 +2,12 @@
 
 import io
 import picamera
-import ImageChops
 import math, operator
 from PIL import Image
+from PIL import ImageChops
 from time import sleep
 
-threshold = 100
+threshold = 10
 
 prior_image = None
 
@@ -37,8 +37,10 @@ def detect_motion(camera):
 
         rms = calculateRms(current_image, prior_image)
 
+        print rms
+
         if rms > threshold:
-            print 'motion detected!'
+            #print 'motion detected!'
             result = True
         else:
             result = False
@@ -69,10 +71,9 @@ with picamera.PiCamera() as camera:
     sleep(2)
 
     camera.resolution = (1280, 720)
+    camera.vflip = True
 
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
-
-    print 'starting recording...'
 
     camera.start_recording(stream, format='h264')
 
@@ -81,6 +82,7 @@ with picamera.PiCamera() as camera:
             camera.wait_recording(1)
 
             if detect_motion(camera):
+                print 'started recording motion'
                 camera.split_recording('after.h264')
 
                 write_video(stream)
@@ -88,6 +90,7 @@ with picamera.PiCamera() as camera:
                 while detect_motion(camera):
                     camera.wait_recording(1)
 
+                print 'stopped recording motion'
                 camera.split_recording(stream)
     finally:
         camera.stop_recording()
