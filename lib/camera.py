@@ -1,157 +1,84 @@
-#!/usr/bin/python
-
 import io
-import picamera, picamera.array
+import picamera
+import picamera.array
 import numpy as np
-import math, operator
-from PIL import Image
-from PIL import ImageChops
 from time import sleep
+import messageservice
+import fileservice
 
-prior_image = None
+frames = 0
+motion_detected = False
+threshold = 20
 
-def compareImageChops(im1, im2):
-    return ImageChops.difference(im1, im2).getbbox() is None
+class MyMotionDetector(picamera.array.PiMotionAnalysis):
+    def analyse(self, a):
+        global frames, motion_detected
 
-def compareNumpyArrays(a, b, threshold=10):
-    # return (np.abs(a.astype(np.int16) - b.astype(np.int16)) > threshold).any()
+        if frames < 10:
+            frames = frames + 1
 
-    # Ensure a and b are types which won't overflow on subtraction
-    a = a.astype(np.int16)
-    b = b.astype(np.int16)
-    # Create an array from the absolute difference of a and b
-    c = np.abs(a - b)
-    # Create an array of truth values indicating whether any
-    # absolute differences are greater than the threshold
-    c = c > threshold
-    # Return whether any values are greater than the threshold
+            return
 
-    return c.any()
+        a = np.sqrt(
+            np.square(a['x'].astype(np.float)) +
+            np.square(a['y'].astype(np.float))
+        ).clip(0, 255).astype(np.uint8)
 
-def calculateRms(im1, im2):
-    diff = ImageChops.difference(im1, im2)
+        sum_ = (a > 60).sum()
 
-    h = diff.histogram()
+        print "sum", sum_
 
-    sq = (value*((idx%256)**2) for idx, value in enumerate(h))
+        # If there're more than 10 vectors with a magnitude greater than 60, then say we've detected motion
+        if sum_ > threshold:
+            print('Motion detected!')
 
-    sum_of_squares = sum(sq)
-
-    rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
-
-    # h1 = im1.histogram()
-    # h2 = im2.histogram()
-    #
-    # rms = math.sqrt(reduce(operator.add, map(lambda a,b: (a-b)**2, h1, h2))/len(h1))
-
-    print "rms: ", rms
-
-    return rms
-
-def comparePixels(data1, data2):
-    threshold = 10
-    sensitivity = 25
-
-    changedPixels = 0
-
-    for x in range(0, 1024):
-        for y in range(0, 768):
-            # Just check green channel as it's the highest quality channel
-            # pixColor = 1 # red=0 green=1 blue=2
-            diff = abs(data1[x,y][1] - data2[x,y][1])
-
-            print "diff: ", diff
-
-            if diff > threshold:
-                changedPixels += 1
-
-            if changedPixels > sensitivity:
-                break  # break inner loop
-
-        if changedPixels > sensitivity:
-            break  #break outer loop
-
-    print "changed pixels: ", changedPixels
-
-    if changedPixels > sensitivity:
-        return True
-    else:
-        return False
-
-def detect_motion(camera):
-    global prior_image
-
-    # stream = io.BytesIO()
-
-    with picamera.array.PiRGBArray(camera) as stream:
-        camera.capture(stream, format='rgb', use_video_port=True)
-
-        stream.seek(0)
-
-        if prior_image is None:
-            #prior_image = Image.open(stream)
-            prior_image = stream.array
-
-            return False
-        else:
-            #current_image = Image.open(stream)
-            current_image = stream.array
-
-            # result = calculateRms(current_image, prior_image) > threshold
-
-            # result = campareImageChops(current_image, prior_image)
-
-            # result = compareNumpyArrays(np.array(current_image), np.array(prior_image))
-
-            result = comparePixels(current_image, prior_image)
-
-            prior_image = current_image
-
-            return result
-
-def write_video(stream):
-    with io.open('before.h264', 'wb') as output:
-        for frame in stream.frames:
-            if frame.header:
-                stream.seek(frame.position)
-                break
-
-        while True:
-            buf = stream.read1()
-
-            if not buf:
-                break
-
-            output.write(buf)
-
-    stream.seek(0)
-    stream.truncate()
+            motion_detected = True
 
 with picamera.PiCamera() as camera:
-    sleep(2)
+    camera.resolution = (640, 480)
+    camera.framerate = 30
 
-    camera.resolution = (1024, 768)
     camera.vflip = True
     camera.hflip = True
 
-    stream = picamera.PiCameraCircularIO(camera, seconds=10)
+    print 'starting recording...'
 
-    camera.start_recording(stream, format='h264')
+    camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
-    try:
-        while True:
+    while True:
+        while not motion_detected:
             camera.wait_recording(1)
 
-            if detect_motion(camera):
-                print 'started recording motion'
-                camera.split_recording('after.h264')
-
-                write_video(stream)
-
-                while detect_motion(camera):
-                    camera.wait_recording(1)
-
-                print 'stopped recording motion'
-                camera.split_recording(stream)
-    finally:
         camera.stop_recording()
+
+        motion_detected = False
+
+        # todo - once motion is detected, take video stream from above and write it
+        # to a notification stream ie. aws
+
+        stream = io.BytesIO()
+
+        # print 'capturing still image...'
+        camera.capture('still.jpg', format='jpeg', use_video_port=True)
+        # camera.capture(stream, format='jpeg', use_video_port=True)
+
+        # upload file
+        # print 'uploading file...'
+        # fileservice.uploadFile('still.jpg')
+        # print 'upload complete.'
+        #
+        # # send mms message
+        # print 'sending message...'
+        # messageservice.sendMessage(
+        #     'Motion detected!',
+        #     '+16513532651',
+        #     'http://s3.amazonaws.com/pi-spy/images/still.jpg'
+        # )
+        # print 'sending complete.'
+
+        # print 'pausing...'
+        #wait to start recording back up
+        sleep(5)
+
+        # print 'starting recording back up...'
+        camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))

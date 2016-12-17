@@ -9,15 +9,11 @@ Camera functions for Raspberry Pi 3 Model B
     
     sudo apt full-upgrade
     
-    sudo apt install netatalk
-    
-    sudo apt install avahi-daemon
-    
-    curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - && sudo apt install nodejs
-
     sudo pip install boto3
 
     sudo pip install twilio
+    
+    add aws credentials file to ~/.aws
 ### License
 
 [The MIT License](http://opensource.org/licenses/MIT)
