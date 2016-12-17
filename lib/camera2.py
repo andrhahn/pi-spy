@@ -47,6 +47,8 @@ with picamera.PiCamera() as camera:
 
     camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
+    camera.wait_recording(99999999999)
+
     # while True:
     #     while not motion_detected:
     #         camera.wait_recording(1)
