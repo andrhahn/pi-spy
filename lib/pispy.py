@@ -47,15 +47,11 @@ with picamera.PiCamera() as camera:
         while not motion_detected:
             camera.wait_recording(1)
 
-        print 'motion detected...'
+        print 'motion detected. capturing image..'
 
         camera.stop_recording()
 
-        print 'capturing image...'
-
         camera.capture('still.jpg', format='jpeg', use_video_port=True)
-
-        print 'image captured...'
 
         # motion_detected = False
 
