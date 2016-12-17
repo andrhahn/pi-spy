@@ -58,7 +58,7 @@ with picamera.PiCamera() as camera:
 
         fileservice.uploadFile('still.jpg')
 
-        messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
+        # messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
         sleep(10)
 
