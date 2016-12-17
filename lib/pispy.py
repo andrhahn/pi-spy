@@ -39,7 +39,7 @@ with picamera.PiCamera() as camera:
     camera.vflip = True
     camera.hflip = True
 
-    print 'starting motion detection...'
+    print 'starting camera...'
 
     camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
