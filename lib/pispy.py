@@ -12,7 +12,7 @@ import fileservice
 
 frames = 0
 motion_detected = False
-threshold = 20
+threshold = 10
 
 class MyMotionDetector(picamera.array.PiMotionAnalysis):
     def analyse(self, a):
