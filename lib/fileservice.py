@@ -1,16 +1,42 @@
-from twilio.rest import TwilioRestClient
+# import boto
+import boto3
+# from boto.s3.key import Key
 
-accountSid = 'AC3371e1df0c1b2327c2beb171c22efb6e'
-authToken = 'bf6e7a853c797ac0caa48823f814b927'
+AWS_ACCESS_KEY_ID = 'AKIAJBP2UJSYCRTPEJ2Q'
+AWS_SECRET_ACCESS_KEY = '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'
 
-def sendMessage(body, to, media_url):
-    client = TwilioRestClient(accountSid, authToken)
+def uploadFile(fileName):
+    s3 = boto3.resource('s3')
 
-    myTwilioNumber = '+16122606647'
+    data = open(fileName, 'rb')
+    s3.Bucket('pi-spy').put_object(ACL='public-read', ContentType='image/jpeg', Key='images/' + fileName, Body=data)
 
-    myMessage = client.messages.create(
-        body=body,
-        from_=myTwilioNumber,
-        to=to,
-        media_url=media_url
-    )
+
+    # client = boto3.client(
+    #     's3',
+    #     aws_access_key_id=ACCESS_KEY,
+    #     aws_secret_access_key=SECRET_KEY,
+    #     aws_session_token=SESSION_TOKEN,
+    # )
+    #
+    # data = open(fileName, 'rb')
+    #
+    # client.Bucket('pi-spy').put_object(Key='still.jpg', Body=data)
+
+    # s3 = boto3.resource('s3')
+    # data = open(fileName, 'rb')
+    # s3.Bucket('pi-spy').put_object(Key='still.jpg', Body=data)
+
+
+    # conn = boto3.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    # bucket = conn.get_bucket('pi-spy', validate=True)
+    #
+    # key = bucket.new_key('images/' + fileName)
+    # key.set_contents_from_filename(fileName)
+    #
+    # # k = Key(bucket)
+    # # k.key = key
+    #
+    # s3 = boto3.resource('s3')
+    # data = open(fileName, 'rb')
+    # s3.Bucket('pi-spy').put_object(Key='still.jpg', Body=data)

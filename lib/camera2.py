@@ -3,9 +3,12 @@ import picamera
 import picamera.array
 import numpy as np
 from time import sleep
+import messageservice
+import fileservice
 
 frames = 0
 motion_detected = False
+threshold = 20
 
 class MyMotionDetector(picamera.array.PiMotionAnalysis):
     def analyse(self, a):
@@ -20,9 +23,17 @@ class MyMotionDetector(picamera.array.PiMotionAnalysis):
             np.square(a['x'].astype(np.float)) +
             np.square(a['y'].astype(np.float))
         ).clip(0, 255).astype(np.uint8)
+
+        sum_ = (a > 60).sum()
+
+        print "sum", sum_
+
         # If there're more than 10 vectors with a magnitude greater than 60, then say we've detected motion
-        if (a > 60).sum() > 10:
+        if sum_ > threshold:
             print('Motion detected!')
+
+            #print "sum: ",
+
             motion_detected = True
 
 with picamera.PiCamera() as camera:
@@ -49,12 +60,27 @@ with picamera.PiCamera() as camera:
 
         stream = io.BytesIO()
 
-        print 'capturing still image...'
+        # print 'capturing still image...'
         camera.capture('still.jpg', format='jpeg', use_video_port=True)
-        #camera.capture(stream, format='jpeg', use_video_port=True)
+        # camera.capture(stream, format='jpeg', use_video_port=True)
 
+        # upload file
+        # print 'uploading file...'
+        # fileservice.uploadFile('still.jpg')
+        # print 'upload complete.'
+        #
+        # # send mms message
+        # print 'sending message...'
+        # messageservice.sendMessage(
+        #     'Motion detected!',
+        #     '+16513532651',
+        #     'http://s3.amazonaws.com/pi-spy/images/still.jpg'
+        # )
+        # print 'sending complete.'
+
+        # print 'pausing...'
         #wait to start recording back up
         sleep(5)
 
-        print 'starting recording back up...'
+        # print 'starting recording back up...'
         camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
