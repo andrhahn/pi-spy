@@ -38,6 +38,7 @@ with picamera.PiCamera() as camera:
     camera.framerate = 30
     camera.vflip = True
     camera.hflip = True
+    camera.led = False
 
     print 'starting motion detection...'
 
