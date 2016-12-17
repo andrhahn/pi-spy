@@ -71,7 +71,6 @@ with picamera.PiCamera() as camera:
         # print 'sending message...'
         # messageservice.sendMessage(
         #     'Motion detected!',
-        #     '',
         #     'http://s3.amazonaws.com/pi-spy/images/still.jpg'
         # )
         # print 'sending complete.'

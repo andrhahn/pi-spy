@@ -1,0 +1,5 @@
+[twilio]
+account_sid = AC3371e1df0c1b2327c2beb171c22efb6e
+auth_token = bf6e7a853c797ac0caa48823f814b927
+from_number = +16122606647
+message_recipients = +16513532651
