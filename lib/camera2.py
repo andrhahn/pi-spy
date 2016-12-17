@@ -47,40 +47,40 @@ with picamera.PiCamera() as camera:
 
     camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
-    while True:
-        while not motion_detected:
-            camera.wait_recording(1)
-
-        camera.stop_recording()
-
-        motion_detected = False
-
-        # todo - once motion is detected, take video stream from above and write it
-        # to a notification stream ie. aws
-
-        stream = io.BytesIO()
-
-        # print 'capturing still image...'
-        camera.capture('still.jpg', format='jpeg', use_video_port=True)
-        # camera.capture(stream, format='jpeg', use_video_port=True)
-
-        # upload file
-        # print 'uploading file...'
-        # fileservice.uploadFile('still.jpg')
-        # print 'upload complete.'
-        #
-        # # send mms message
-        # print 'sending message...'
-        # messageservice.sendMessage(
-        #     'Motion detected!',
-        #     '+16513532651',
-        #     'http://s3.amazonaws.com/pi-spy/images/still.jpg'
-        # )
-        # print 'sending complete.'
-
-        # print 'pausing...'
-        #wait to start recording back up
-        sleep(5)
-
-        # print 'starting recording back up...'
-        camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
+    # while True:
+    #     while not motion_detected:
+    #         camera.wait_recording(1)
+    #
+    #     camera.stop_recording()
+    #
+    #     motion_detected = False
+    #
+    #     # todo - once motion is detected, take video stream from above and write it
+    #     # to a notification stream ie. aws
+    #
+    #     stream = io.BytesIO()
+    #
+    #     # print 'capturing still image...'
+    #     camera.capture('still.jpg', format='jpeg', use_video_port=True)
+    #     # camera.capture(stream, format='jpeg', use_video_port=True)
+    #
+    #     # upload file
+    #     # print 'uploading file...'
+    #     # fileservice.uploadFile('still.jpg')
+    #     # print 'upload complete.'
+    #     #
+    #     # # send mms message
+    #     # print 'sending message...'
+    #     # messageservice.sendMessage(
+    #     #     'Motion detected!',
+    #     #     '+16513532651',
+    #     #     'http://s3.amazonaws.com/pi-spy/images/still.jpg'
+    #     # )
+    #     # print 'sending complete.'
+    #
+    #     # print 'pausing...'
+    #     #wait to start recording back up
+    #     sleep(5)
+    #
+    #     # print 'starting recording back up...'
+    #     camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
