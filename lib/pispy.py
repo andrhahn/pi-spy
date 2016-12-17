@@ -38,7 +38,6 @@ with picamera.PiCamera() as camera:
     camera.framerate = 30
     camera.vflip = True
     camera.hflip = True
-    camera.led = False
 
     print 'starting motion detection...'
 
@@ -58,7 +57,7 @@ with picamera.PiCamera() as camera:
 
         fileservice.uploadFile('still.jpg')
 
-        # messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
+        #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
         sleep(10)
 

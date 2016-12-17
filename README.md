@@ -20,6 +20,9 @@ Requires Amazon S3 and Twilio accounts (both are free)
     configure aws credentials - ex. create ~/.aws/credentials
     
     create and configure app_config file from app_config_template
+    
+    sudo nano /boot/config.txt
+    add: disable_camera_led=1
 
 ##### Run
     python detect_motion.py
