@@ -9,6 +9,8 @@ sys.path.append(os.path.curdir)
 parser = SafeConfigParser()
 parser.read('../app_config')
 
+print "hello: ",  parser.get('twilio', 'account_sid')
+
 def sendMessage(body, to, media_url):
     accountSid = parser.get('twilio', 'account_sid')
     authToken = parser.get('twilio', 'auth_token')
