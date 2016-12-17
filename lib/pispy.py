@@ -47,11 +47,13 @@ with picamera.PiCamera() as camera:
         while not motion_detected:
             camera.wait_recording(1)
 
-        print 'Motion detected...'
+        print 'motion detected...'
 
         camera.stop_recording()
 
         motion_detected = False
+
+        print 'capturing image...'
 
         camera.capture('still.jpg', format='jpeg', use_video_port=True)
 
@@ -59,6 +61,10 @@ with picamera.PiCamera() as camera:
 
         #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
-        sleep(10)
+        print 'pausing...'
+
+        sleep(5)
+
+        print 'starting motion detection...'
 
         camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
