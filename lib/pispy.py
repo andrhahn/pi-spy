@@ -79,7 +79,7 @@ with picamera.PiCamera() as camera:
 
             s3_bucket_url = 'http://s3.amazonaws.com/' + parser.get('s3', 'bucket_name')
 
-            messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + fileName + '.h264', s3_bucket_url + fileName + '.jpg')
+            messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + fileName + '.h264', s3_bucket_url + '/' + fileName + '.jpg')
 
             motion_detected = False
 
