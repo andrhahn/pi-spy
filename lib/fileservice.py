@@ -7,4 +7,7 @@ def uploadFile(data):
 
     bucket = s3.Bucket('pi-spy')
 
-    bucket.upload_fileobj(data, 'images/test2.jpg')
+    # s3.Bucket('pi-spy')
+    # .put_object(ACL='public-read', ContentType='image/jpeg', Key='images/' + fileName, Body=data)
+
+    bucket.upload_fileobj(Fileobj=data, Key='images/test3.jpg', ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/jpeg'})
