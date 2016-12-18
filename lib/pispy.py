@@ -14,13 +14,13 @@ import fileservice
 
 threshold = 10
 motion_detected = False
-last_still_capture_time = dt.datetime.now()
+last_capture_time = dt.datetime.now()
 
 class MyMotionDetector(picamera.array.PiMotionAnalysis):
     def analyse(self, a):
-        global motion_detected, last_still_capture_time
+        global motion_detected, last_capture_time
 
-        if dt.datetime.now() > last_still_capture_time + dt.timedelta(seconds=5):
+        if dt.datetime.now() > last_capture_time + dt.timedelta(seconds=5):
             a = np.sqrt(
                 np.square(a['x'].astype(np.float)) +
                 np.square(a['y'].astype(np.float))
@@ -58,7 +58,7 @@ with picamera.PiCamera() as camera:
         # motion_detected = False
 
         # noinspection PyRedeclaration
-        last_still_capture_time = dt.datetime.now()
+        last_capture_time = dt.datetime.now()
 
         stream = io.BytesIO()
 
@@ -68,11 +68,11 @@ with picamera.PiCamera() as camera:
 
         stream.seek(0)
 
-        fileName = last_still_capture_time.strftime('%Y-%m-%dT%H.%M.%S.%f') + '.jpg'
+        fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
         print fileName
 
-        fileservice.uploadFile('', stream)
+        #fileservice.uploadFile(fileName, stream)
 
         # messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/' + fileName)
 
