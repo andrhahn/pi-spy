@@ -78,16 +78,14 @@ with picamera.PiCamera() as camera:
             # video_stream.seek(0)
             # fileservice.uploadFile(fileName + '.h264', video_stream, 'video/h264')
 
-
-
-            image_stream.seek(0)
-            vimeo_client.sendMessage('', '')
-
-
-
             s3_bucket_url = 'http://s3.amazonaws.com/' + parser.get('s3', 'bucket_name')
 
             messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + '/' + fileName + '.h264', s3_bucket_url + '/' + fileName + '.jpg')
+
+            #temp - vimeo testing...
+            video_stream.seek(0)
+            vimeo_client.sendMessage(fileName, video_stream)
+
 
             motion_detected = False
 

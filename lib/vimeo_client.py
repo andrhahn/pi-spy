@@ -6,15 +6,14 @@ import ConfigParser
 parser = ConfigParser.SafeConfigParser()
 parser.read('../app_config')
 
-def sendMessage(body, media_url):
+def sendMessage(fileName, data):
     v = vimeo.VimeoClient(
         token=parser.get('vimeo', 'token'),
         key=parser.get('vimeo', 'key'),
         secret=parser.get('vimeo', 'secret')
     )
 
-    # Make the request to the server for the "/me" endpoint.
-    about_me = v.get('/me')
+    #video_uri = v.upload('your-filename.mp4')
+    video_uri = v.upload(data)
 
-    assert about_me.status_code == 200  # Make sure we got back a successful response.
-    print about_me.json()   # Load the body's JSON data.
+    v.patch(video_uri, data={'name': 'Motion deterted - ' + fileName, 'description': 'Motion detected...'})
