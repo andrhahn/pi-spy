@@ -58,9 +58,12 @@ with picamera.PiCamera() as camera:
             # noinspection PyRedeclaration
             last_capture_time = dt.datetime.now()
 
-            image_stream = io.BytesIO()
+            fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S')
 
-            camera.capture(image_stream, format='jpeg', use_video_port=True)
+            #image_stream = io.BytesIO()
+
+            #camera.capture(image_stream, format='jpeg', use_video_port=True)
+            camera.capture(fileName + '.jpg', format='jpeg', use_video_port=True)
 
             video_stream = io.BytesIO()
 
@@ -70,8 +73,6 @@ with picamera.PiCamera() as camera:
 
             camera.split_recording('/dev/null')
 
-            fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S')
-
             # image_stream.seek(0)
             # fileservice.uploadFile(fileName + '.jpg', image_stream, 'image/jpeg')
             #
@@ -80,11 +81,10 @@ with picamera.PiCamera() as camera:
 
             s3_bucket_url = 'http://s3.amazonaws.com/' + parser.get('s3', 'bucket_name')
 
-            messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + '/' + fileName + '.h264', s3_bucket_url + '/' + fileName + '.jpg')
+            #messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + '/' + fileName + '.h264', s3_bucket_url + '/' + fileName + '.jpg')
 
-            #temp - vimeo testing...
             video_stream.seek(0)
-            vimeo_client.sendMessage(fileName, video_stream)
+            vimeo_client.sendMessage(fileName + '.jpg')
 
 
             motion_detected = False
