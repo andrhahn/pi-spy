@@ -61,7 +61,9 @@ with picamera.PiCamera() as camera:
 
             camera.wait_recording(5)
 
-            camera.stop_recording()
+            camera.split_recording('/dev/null')
+
+            # camera.stop_recording()
 
             fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S')
 
@@ -73,7 +75,7 @@ with picamera.PiCamera() as camera:
 
             messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/' + fileName + '.jpg')
 
-            camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
+            # camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
             motion_detected = False
 
