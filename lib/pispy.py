@@ -73,7 +73,7 @@ with picamera.PiCamera() as camera:
 
             s3Link = 'http://s3.amazonaws.com/pi-spy/' + fileName + '.jpg'
 
-            messageservice.sendMessage('Motion detected! \n' + s3Link, s3Link)
+            messageservice.sendMessage('Motion detected!\nhttp://s3.amazonaws.com/pi-spy/' + fileName + '.h264', 'http://s3.amazonaws.com/pi-spy/' + fileName + '.jpg')
 
             motion_detected = False
 
