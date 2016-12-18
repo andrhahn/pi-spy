@@ -6,32 +6,35 @@
 import picamera
 import picamera.array
 import numpy as np
+import datetime as dt
 from time import sleep
 import messageservice
 import fileservice
 
+threshold = 10
 frames = 0
 motion_detected = False
-threshold = 10
+last_still_capture_time = dt.datetime.now()
 
 class MyMotionDetector(picamera.array.PiMotionAnalysis):
     def analyse(self, a):
-        global frames, motion_detected
+        global frames, motion_detected, last_still_capture_time
 
-        if frames < 10:
-            frames = frames + 1
-            return
+        if dt.datetime.now() > last_still_capture_time + dt.timedelta(seconds=5):
+            if frames < 10:
+                frames = frames + 1
+                return
 
-        a = np.sqrt(
-            np.square(a['x'].astype(np.float)) +
-            np.square(a['y'].astype(np.float))
-        ).clip(0, 255).astype(np.uint8)
+            a = np.sqrt(
+                np.square(a['x'].astype(np.float)) +
+                np.square(a['y'].astype(np.float))
+            ).clip(0, 255).astype(np.uint8)
 
-        sum_ = (a > 60).sum()
+            sum_ = (a > 60).sum()
 
-        if sum_ > threshold:
-            #print "sum", sum_
-            motion_detected = True
+            if sum_ > threshold:
+                #print "sum", sum_
+                motion_detected = True
 
 def record(camera):
     print 'recording started...'
@@ -49,21 +52,25 @@ with picamera.PiCamera() as camera:
     camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
     while True:
-        if motion_detected:
-            print 'motion detected. capturing image..'
+        while not motion_detected:
+            camera.wait_recording(1)
 
-            camera.stop_recording()
+        print 'motion detected. capturing image..'
 
-            motion_detected = False
+        camera.stop_recording()
 
-            camera.capture('still.jpg', format='jpeg', use_video_port=True)
+        motion_detected = False
 
-            #fileservice.uploadFile('still.jpg')
+        last_still_capture_time = dt.datetime.now()
 
-            #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
+        camera.capture('still.jpg', format='jpeg', use_video_port=True)
 
-            # sleep(5)
+        #fileservice.uploadFile('still.jpg')
 
-            camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
+        #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
         sleep(5)
+
+        print 'waiting for motion...'
+
+        camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
