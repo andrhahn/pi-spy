@@ -33,6 +33,11 @@ class MyMotionDetector(picamera.array.PiMotionAnalysis):
             #print "sum", sum_
             motion_detected = True
 
+def record(camera):
+    print 'recording started...'
+
+    camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
+
 with picamera.PiCamera() as camera:
     camera.resolution = (640, 480)
     camera.framerate = 30
@@ -51,18 +56,14 @@ with picamera.PiCamera() as camera:
 
         camera.stop_recording()
 
-        camera.capture('still.jpg', format='jpeg', use_video_port=True)
+        motion_detected = False
 
-        # motion_detected = False
+        camera.capture('still.jpg', format='jpeg', use_video_port=True)
 
         #fileservice.uploadFile('still.jpg')
 
         #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
-        #sleep(5)
-
-        print 'waiting for motion...'
+        sleep(5)
 
         camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
-
-        motion_detected = False
