@@ -8,6 +8,7 @@ import datetime as dt
 import io
 import messageservice
 import fileservice
+import vimeo_client
 import ConfigParser
 
 parser = ConfigParser.SafeConfigParser()
@@ -71,11 +72,18 @@ with picamera.PiCamera() as camera:
 
             fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S')
 
-            image_stream.seek(0)
-            fileservice.uploadFile(fileName + '.jpg', image_stream, 'image/jpeg')
+            # image_stream.seek(0)
+            # fileservice.uploadFile(fileName + '.jpg', image_stream, 'image/jpeg')
+            #
+            # video_stream.seek(0)
+            # fileservice.uploadFile(fileName + '.h264', video_stream, 'video/h264')
 
-            video_stream.seek(0)
-            fileservice.uploadFile(fileName + '.h264', video_stream, 'video/h264')
+
+
+            image_stream.seek(0)
+            vimeo_client.sendMessage('', '')
+
+
 
             s3_bucket_url = 'http://s3.amazonaws.com/' + parser.get('s3', 'bucket_name')
 

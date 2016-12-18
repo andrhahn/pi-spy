@@ -1,6 +1,11 @@
 [s3]
 bucket_name =
 
+[vimeo]
+token =
+key =
+secret =
+
 [twilio]
 account_sid =
 auth_token =

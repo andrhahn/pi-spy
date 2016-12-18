@@ -2,7 +2,7 @@
 
 Pure python Motion detector for Raspberry Pi 3 Model B with camera module
 
-Detects motion and uploaded image and video to S3 then send SMS message via Twilio
+Detects motion and uploaded image and video to S3 or Vimeo then send SMS message via Twilio
 
 Requires Amazon S3 and Twilio accounts (both are free)
 
@@ -14,6 +14,8 @@ Requires Amazon S3 and Twilio accounts (both are free)
     sudo apt full-upgrade
     
     sudo pip install boto3
+    
+    sudo pip install PyVimeo
 
     sudo pip install twilio
     
