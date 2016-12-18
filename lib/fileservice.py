@@ -2,8 +2,9 @@
 
 import boto3
 
-def uploadFile(fileName):
+def uploadFile(data):
     s3 = boto3.resource('s3')
 
-    data = open(fileName, 'rb')
-    s3.Bucket('pi-spy').put_object(ACL='public-read', ContentType='image/jpeg', Key='images/' + fileName, Body=data)
+    bucket = s3.Bucket('pi-spy')
+
+    bucket.upload_fileobj(data, 'images/test2.jpg')

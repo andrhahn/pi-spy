@@ -63,11 +63,13 @@ with picamera.PiCamera() as camera:
 
         last_still_capture_time = dt.datetime.now()
 
-        camera.capture('still.jpg', format='jpeg', use_video_port=True)
+        stream = io.BytesIO()
+
+        camera.capture(stream, format='jpeg', use_video_port=True)
 
         print 'image captured...'
 
-        #fileservice.uploadFile('still.jpg')
+        fileservice.uploadFile(stream)
 
         #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
