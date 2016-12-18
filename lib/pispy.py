@@ -55,7 +55,7 @@ with picamera.PiCamera() as camera:
         while not motion_detected:
             camera.wait_recording(1)
 
-        print 'motion detected. capturing image..'
+        print 'motion detected...'
 
         camera.stop_recording()
 
@@ -64,6 +64,8 @@ with picamera.PiCamera() as camera:
         last_still_capture_time = dt.datetime.now()
 
         camera.capture('still.jpg', format='jpeg', use_video_port=True)
+
+        print 'image captured...'
 
         #fileservice.uploadFile('still.jpg')
 
