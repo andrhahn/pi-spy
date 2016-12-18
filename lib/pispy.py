@@ -46,36 +46,36 @@ with picamera.PiCamera() as camera:
 
     while True:
         if motion_detected:
-            # while not motion_detected:
-            #     camera.wait_recording(1)
-
-            print 'motion detected...'
-
-            # camera.stop_recording()
+            print 'capturing motion...'
 
             # noinspection PyRedeclaration
             last_capture_time = dt.datetime.now()
 
-            stream = io.BytesIO()
+            video_stream = io.BytesIO()
 
-            camera.split_recording(stream)
+            camera.split_recording(video_stream)
 
-            # camera.start_recording(stream, format='h264', quality=20)
             camera.wait_recording(5)
+
             camera.stop_recording()
 
-            print 'video captured...'
+            image_stream = io.BytesIO()
 
-            stream.seek(0)
+            camera.capture(image_stream, format='jpeg', use_video_port=True)
 
-            fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264'
+            video_stream.seek(0)
 
-            fileservice.uploadFile(fileName, stream, 'video/h264')
+            fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S')
 
-            messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/' + fileName)
+            fileservice.uploadFile(fileName + '.jpg', image_stream, 'image/jpeg')
+            fileservice.uploadFile(fileName + '.h264', video_stream, 'video/h264')
+
+            messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/' + fileName + '.jpg')
 
             camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
             motion_detected = False
+
+            print 'motion capture complete.'
         else:
             camera.wait_recording(1)
