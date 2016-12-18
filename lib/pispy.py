@@ -13,19 +13,14 @@ import messageservice
 import fileservice
 
 threshold = 10
-frames = 0
 motion_detected = False
 last_still_capture_time = dt.datetime.now()
 
 class MyMotionDetector(picamera.array.PiMotionAnalysis):
     def analyse(self, a):
-        global frames, motion_detected, last_still_capture_time
+        global motion_detected, last_still_capture_time
 
         if dt.datetime.now() > last_still_capture_time + dt.timedelta(seconds=5):
-            if frames < 10:
-                frames = frames + 1
-                return
-
             a = np.sqrt(
                 np.square(a['x'].astype(np.float)) +
                 np.square(a['y'].astype(np.float))
