@@ -2,6 +2,7 @@
 
 import vimeo
 import ConfigParser
+import io
 
 parser = ConfigParser.SafeConfigParser()
 parser.read('../app_config')
