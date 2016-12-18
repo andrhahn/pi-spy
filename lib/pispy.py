@@ -1,14 +1,11 @@
 #!/usr/bin/python
 
-# based on examples from:
-# https://picamera.readthedocs.io/en/release-1.12/recipes2.html#custom-outputs
-
+# noinspection PyUnresolvedReferences
 import picamera
 import picamera.array
 import numpy as np
 import datetime as dt
 import io
-from time import sleep
 import messageservice
 import fileservice
 
