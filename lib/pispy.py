@@ -46,7 +46,7 @@ with picamera.PiCamera() as camera:
 
     print 'waiting for motion...'
 
-    camera.start_recording('/dev/null', format='h264', profile='high', level='4.1', motion_output=MyMotionDetector(camera))
+    camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
     #camera.start_recording('lowres.h264', splitter_port=2, resize=(320, 240))
 
@@ -75,7 +75,7 @@ with picamera.PiCamera() as camera:
             fileservice.uploadFile(fileName + '.jpg', image_stream, 'image/jpeg')
 
             video_stream.seek(0)
-            fileservice.uploadFile(fileName + '.h264', video_stream, 'video/mp4')
+            fileservice.uploadFile(fileName + '.h264', video_stream, 'video/h264')
 
             s3_bucket_url = 'http://s3.amazonaws.com/' + parser.get('s3', 'bucket_name')
 
