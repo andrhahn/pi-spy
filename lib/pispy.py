@@ -55,6 +55,7 @@ with picamera.PiCamera() as camera:
         print 'A'
 
         while not motion_detected:
+            print 'B`'
             camera.wait_recording(1)
 
         print 'motion detected. capturing image..'
