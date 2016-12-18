@@ -52,22 +52,22 @@ with picamera.PiCamera() as camera:
 
         camera.stop_recording()
 
-        # motion_detected = False
-
         # noinspection PyRedeclaration
         last_capture_time = dt.datetime.now()
 
         stream = io.BytesIO()
 
-        camera.capture(stream, format='jpeg', use_video_port=True)
+        camera.start_recording(stream, format='h264')
+        camera.wait_recording(5)
+        camera.stop_recording()
 
-        print 'image captured...'
+        print 'video captured...'
 
         stream.seek(0)
 
-        fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+        fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264'
 
-        fileservice.uploadFile(fileName, stream, 'image/jpeg')
+        fileservice.uploadFile(fileName, stream, 'video/h264')
 
         #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/' + fileName)
 
