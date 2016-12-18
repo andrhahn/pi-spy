@@ -69,8 +69,4 @@ with picamera.PiCamera() as camera:
 
         #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
-        # sleep(5)
-
-        print 'waiting for motion...'
-
         camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
