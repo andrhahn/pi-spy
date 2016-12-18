@@ -50,14 +50,16 @@ with picamera.PiCamera() as camera:
 
         print 'motion detected...'
 
-        camera.stop_recording()
+        # camera.stop_recording()
 
         # noinspection PyRedeclaration
         last_capture_time = dt.datetime.now()
 
         stream = io.BytesIO()
 
-        camera.start_recording(stream, format='h264', quality=20)
+        camera.split_recording(stream)
+
+        # camera.start_recording(stream, format='h264', quality=20)
         camera.wait_recording(5)
         camera.stop_recording()
 
