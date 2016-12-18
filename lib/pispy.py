@@ -57,7 +57,7 @@ with picamera.PiCamera() as camera:
 
         stream = io.BytesIO()
 
-        camera.start_recording(stream, format='h264')
+        camera.start_recording(stream, format='h264', quality=20)
         camera.wait_recording(5)
         camera.stop_recording()
 
