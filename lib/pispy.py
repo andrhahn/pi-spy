@@ -70,11 +70,9 @@ with picamera.PiCamera() as camera:
 
         fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S.jpg')
 
-        print fileName
+        fileservice.uploadFile(fileName, stream)
 
-        #fileservice.uploadFile(fileName, stream)
-
-        # messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/' + fileName)
+        messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/' + fileName)
 
         camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
