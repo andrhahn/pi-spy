@@ -7,6 +7,7 @@ import picamera
 import picamera.array
 import numpy as np
 import datetime as dt
+import io
 from time import sleep
 import messageservice
 import fileservice
