@@ -32,7 +32,7 @@ class MyMotionDetector(picamera.array.PiMotionAnalysis):
         if sum_ > threshold:
             #print "sum", sum_
 
-            print 'motion detected'
+            #print 'motion detected'
 
             motion_detected = True
 
@@ -52,6 +52,8 @@ with picamera.PiCamera() as camera:
     camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
     while True:
+        print 'A'
+
         while not motion_detected:
             camera.wait_recording(1)
 
