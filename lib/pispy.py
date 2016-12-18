@@ -31,9 +31,6 @@ class MyMotionDetector(picamera.array.PiMotionAnalysis):
 
         if sum_ > threshold:
             #print "sum", sum_
-
-            #print 'motion detected'
-
             motion_detected = True
 
 def record(camera):
@@ -52,24 +49,21 @@ with picamera.PiCamera() as camera:
     camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
     while True:
-        print 'A'
+        if motion_detected:
+            print 'motion detected. capturing image..'
 
-        while not motion_detected:
-            print 'B`'
-            camera.wait_recording(1)
+            camera.stop_recording()
 
-        print 'motion detected. capturing image..'
+            motion_detected = False
 
-        camera.stop_recording()
+            camera.capture('still.jpg', format='jpeg', use_video_port=True)
 
-        motion_detected = False
+            #fileservice.uploadFile('still.jpg')
 
-        camera.capture('still.jpg', format='jpeg', use_video_port=True)
+            #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
 
-        #fileservice.uploadFile('still.jpg')
+            sleep(5)
 
-        #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/pi-spy/images/still.jpg')
+            camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
 
-        sleep(5)
-
-        camera.start_recording('/dev/null', format='h264', motion_output=MyMotionDetector(camera))
+        sleep(1)
