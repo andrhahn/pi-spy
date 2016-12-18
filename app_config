@@ -1,3 +1,6 @@
+[s3]
+bucket_name = pi-spy
+
 [twilio]
 account_sid = AC3371e1df0c1b2327c2beb171c22efb6e
 auth_token = bf6e7a853c797ac0caa48823f814b927

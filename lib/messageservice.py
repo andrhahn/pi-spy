@@ -1,12 +1,9 @@
 #!/usr/bin/python
 
 from twilio.rest import TwilioRestClient
-from ConfigParser import SafeConfigParser
-import sys, os
+import ConfigParser
 
-sys.path.append(os.path.curdir)
-
-parser = SafeConfigParser()
+parser = ConfigParser.SafeConfigParser()
 parser.read('../app_config')
 
 def sendMessage(body, media_url):

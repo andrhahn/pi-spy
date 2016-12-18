@@ -1,8 +1,8 @@
 # pi-spy
 
-Pure python Motion detector and notifier for Raspberry Pi 3 Model B with camera module
+Pure python Motion detector for Raspberry Pi 3 Model B with camera module
 
-On motion detection an image is captured and uploaded to S3 and an SMS message is sent via Twilio
+Detects motion and uploaded image and video to S3 then send SMS message via Twilio
 
 Requires Amazon S3 and Twilio accounts (both are free)
 
@@ -19,13 +19,10 @@ Requires Amazon S3 and Twilio accounts (both are free)
     
     configure aws credentials - ex. create ~/.aws/credentials
     
-    create and configure app_config file from app_config_template
-    
-    sudo nano /boot/config.txt
-    add: disable_camera_led=1
+    create and configure app_config from app_config_template
 
 ##### Run
-    python detect_motion.py
+    python pispy.py
     
 ### License
 

@@ -8,6 +8,10 @@ import datetime as dt
 import io
 import messageservice
 import fileservice
+import ConfigParser
+
+parser = ConfigParser.SafeConfigParser()
+parser.read('../app_config')
 
 threshold = 10
 motion_detected = False
@@ -71,9 +75,9 @@ with picamera.PiCamera() as camera:
             video_stream.seek(0)
             fileservice.uploadFile(fileName + '.h264', video_stream, 'video/h264')
 
-            s3Link = 'http://s3.amazonaws.com/pi-spy/' + fileName + '.jpg'
+            s3_bucket_url = 'http://s3.amazonaws.com/' + parser.get('s3', 'bucket_name')
 
-            messageservice.sendMessage('Motion detected!\nhttp://s3.amazonaws.com/pi-spy/' + fileName + '.h264', 'http://s3.amazonaws.com/pi-spy/' + fileName + '.jpg')
+            messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + fileName + '.h264', s3_bucket_url + fileName + '.jpg')
 
             motion_detected = False
 
