@@ -68,7 +68,7 @@ with picamera.PiCamera() as camera:
 
         stream.seek(0)
 
-        fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+        fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S.jpg')
 
         print fileName
 
