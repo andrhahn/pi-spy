@@ -51,6 +51,10 @@ with picamera.PiCamera() as camera:
             # noinspection PyRedeclaration
             last_capture_time = dt.datetime.now()
 
+            image_stream = io.BytesIO()
+
+            camera.capture(image_stream, format='jpeg', use_video_port=True)
+
             video_stream = io.BytesIO()
 
             camera.split_recording(video_stream)
@@ -58,10 +62,6 @@ with picamera.PiCamera() as camera:
             camera.wait_recording(5)
 
             camera.stop_recording()
-
-            image_stream = io.BytesIO()
-
-            camera.capture(image_stream, format='jpeg', use_video_port=True)
 
             fileName = last_capture_time.strftime('%Y-%m-%dT%H.%M.%S')
 
