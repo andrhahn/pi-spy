@@ -88,6 +88,7 @@ with picamera.PiCamera() as camera:
             video_stream.seek(0)
             vimeo_client.sendMessage(fileName + '.jpg')
 
+            print "file uploaded..."
 
             motion_detected = False
 
