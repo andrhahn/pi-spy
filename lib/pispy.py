@@ -30,6 +30,8 @@ class MyMotionDetector(picamera.array.PiMotionAnalysis):
 
             sum_ = (a > 60).sum()
 
+            print "sum", sum_
+
             if sum_ > threshold:
                 print "sum", sum_
                 motion_detected = True
