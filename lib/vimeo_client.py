@@ -14,6 +14,8 @@ def sendMessage(fileName):
         secret=parser.get('vimeo', 'secret')
     )
 
+    print "fileName: ", fileName
+
     video_uri = v.upload(fileName)
 
     v.patch(video_uri, data={'name': 'Motion deterted - ' + fileName, 'description': 'Motion detected...'})
