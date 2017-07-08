@@ -135,7 +135,10 @@ def write_video(stream):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
-    sleep(2)
+    print 'started pispy'
+
+    #sleep(2)
+    sleep(10)
 
     camera.resolution = (1024, 768)
     camera.vflip = True

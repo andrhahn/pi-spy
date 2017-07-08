@@ -8,7 +8,7 @@ Requires Amazon S3 and Twilio accounts (both are free)
 
 ### Getting Started
 
-##### Setup
+##### RPI Setup
     sudo apt update
     
     sudo apt full-upgrade
@@ -19,12 +19,19 @@ Requires Amazon S3 and Twilio accounts (both are free)
 
     sudo pip install twilio
     
-    configure aws credentials - ex. create ~/.aws/credentials
+    create app_config from app_config_template
     
-    create and configure app_config from app_config_template
+    create ~/.aws/credentials from credentials_template
+    
+##### Run pispy
+    cd pi-spy
 
-##### Run
-    python pispy.py
+    (git pull && cd lib && python pispy.py)
+ 
+##### Run test
+    cd pi-spy
+
+    (git pull && cd lib && python test.py)
     
 ### License
 
