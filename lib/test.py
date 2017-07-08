@@ -135,10 +135,12 @@ def write_video(stream):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
-    print 'started pispy'
+    print 'started pi-spy'
 
     #sleep(2)
-    sleep(10)
+
+    print 'sleeping for 5 seconds'
+    sleep(5)
 
     camera.resolution = (1024, 768)
     camera.vflip = True
@@ -146,6 +148,7 @@ with picamera.PiCamera() as camera:
 
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
 
+    print 'starting recording'
     camera.start_recording(stream, format='h264')
 
     try:
