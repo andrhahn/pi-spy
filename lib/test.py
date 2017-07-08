@@ -55,6 +55,11 @@ def calculateRms(im1, im2):
 
     return rms
 
+def compareUsingImageChops(image1, image2):
+    diff = abs(image1 - image2)
+
+    print '==diff: ', diff
+
 def comparePixels(data1, data2):
     threshold = 10
     sensitivity = 25
@@ -110,7 +115,9 @@ def detect_motion(camera):
 
             # result = compareNumpyArrays(np.array(current_image), np.array(prior_image))
 
-            result = comparePixels(current_image, prior_image)
+            # result = comparePixels(current_image, prior_image)
+
+            result = compareUsingImageChops(current_image, prior_image)
 
             prior_image = current_image
 
@@ -137,10 +144,7 @@ def write_video(stream):
 with picamera.PiCamera() as camera:
     print 'started pi-spy'
 
-    #sleep(2)
-
-    print 'sleeping for 5 seconds'
-    sleep(5)
+    sleep(2)
 
     camera.resolution = (1024, 768)
     camera.vflip = True
@@ -148,7 +152,6 @@ with picamera.PiCamera() as camera:
 
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
 
-    #print 'starting recording'
     camera.start_recording(stream, format='h264')
 
     try:
