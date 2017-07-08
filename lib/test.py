@@ -148,14 +148,14 @@ with picamera.PiCamera() as camera:
 
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
 
-    print 'starting recording'
+    #print 'starting recording'
     camera.start_recording(stream, format='h264')
 
     try:
         while True:
             camera.wait_recording(1)
 
-            print 'making check for motion'
+            print 'checking for motion'
 
             if detect_motion(camera):
                 print 'motion detected'
