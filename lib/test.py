@@ -105,13 +105,13 @@ def detect_motion(camera):
         stream.seek(0)
 
         if prior_image is None:
-            #prior_image = Image.open(stream)
-            prior_image = stream.array
+            prior_image = Image.open(stream)
+            #prior_image = stream.array
 
             return False
         else:
-            #current_image = Image.open(stream)
-            current_image = stream.array
+            current_image = Image.open(stream)
+            #current_image = stream.array
 
             # result = calculateRms(current_image, prior_image) > threshold
 
