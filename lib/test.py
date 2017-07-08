@@ -60,6 +60,8 @@ def compareUsingImageChops(image1, image2):
 
     print '==diff: ', diff
 
+    return False
+
 def comparePixels(data1, data2):
     threshold = 10
     sensitivity = 25
