@@ -56,7 +56,9 @@ def calculateRms(im1, im2):
     return rms
 
 def compareUsingImageChops(image1, image2):
-    diff = abs(image1 - image2)
+    #diff = abs(image1 - image2)
+
+    diff = ImageChops.difference(image1, image2)
 
     print '==diff: ', diff
 
