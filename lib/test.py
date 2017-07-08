@@ -157,6 +157,7 @@ with picamera.PiCamera() as camera:
 
             if detect_motion(camera):
                 print 'started recording motion'
+
                 camera.split_recording('after.h264')
 
                 write_video(stream)
@@ -165,6 +166,7 @@ with picamera.PiCamera() as camera:
                     camera.wait_recording(1)
 
                 print 'stopped recording motion'
+
                 camera.split_recording(stream)
     finally:
         camera.stop_recording()
