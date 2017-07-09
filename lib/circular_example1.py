@@ -1,11 +1,10 @@
 import io
-import random
 import picamera
+import datetime as dt
 from PIL import Image
 from PIL import ImageChops
 from PIL import ImageOps
 from PIL import ImageDraw
-import datetime as dt
 
 prior_image = None
 
@@ -19,21 +18,18 @@ def detect_motion(camera):
         return False
     else:
         current_image = Image.open(stream)
-        # Compare current_image to prior_image to detect motion. This is
-        # left as an exercise for the reader!
-
-        #diff = ImageChops.difference(current_image, prior_image)
-        #print '==diff: ', diff
-
-        #compare current image with Master and make a box around the change
+        # compare current_image with prior_image and make a box around the change
         diff_image = ImageOps.posterize(ImageOps.grayscale(ImageChops.difference(prior_image, current_image)) ,1)
 
         rect_coords = diff_image.getbbox()
 
-        if rect_coords != None:
-            print '===rectangle found.  about to draw yellow line'
+        if rect_coords != None: # todo also check for rect dimensions.  also clone image?
+            print '===motion detected. saving image...'
 
-            ImageDraw.Draw(current_image).rectangle(rect_coords, outline="yellow", fill=None)
+            # clone current_image
+            cloned_current_image = current_image.copy()
+
+            ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
 
             print 'about to save image'
 
@@ -41,30 +37,16 @@ def detect_motion(camera):
 
             fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
-            #current_image.save('/home/pi/images/result.jpeg')
-            current_image.save(fileName)
+            cloned_current_image.save(fileName)
 
-            print 'saved image'
-            # Once motion detection is done, make the prior image the current
-            #prior_image = current_image
+            # once motion detection is done, make the prior image the current
+            prior_image = current_image
 
             return True
         else:
-            print '===rectangle not found'
-
             return False
 
-        #result = False
-        #result = random.randint(0, 10) == 0
-
-        # Once motion detection is done, make the prior image the current
-        #prior_image = current_image
-        #return result
-
 def write_video(stream):
-    # Write the entire content of the circular buffer to disk. No need to
-    # lock the stream here as we're definitely not writing to it
-    # simultaneously
     with io.open('before.h264', 'wb') as output:
         for frame in stream.frames:
             if frame.frame_type == picamera.PiVideoFrameType.sps_header:
@@ -75,14 +57,12 @@ def write_video(stream):
             if not buf:
                 break
             output.write(buf)
-    # Wipe the circular stream once we're done
+
     stream.seek(0)
     stream.truncate()
 
 with picamera.PiCamera() as camera:
-    #camera.resolution = (1280, 720)
-    camera.resolution = (640, 480)
-    camera.framerate = 30
+    camera.resolution = (1280, 720)
     camera.vflip = True
     camera.hflip = True
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
@@ -103,5 +83,7 @@ with picamera.PiCamera() as camera:
                     camera.wait_recording(1)
                 print('Motion stopped!')
                 camera.split_recording(stream)
+
+                # todo: write the saved video somewhere...
     finally:
         camera.stop_recording()
