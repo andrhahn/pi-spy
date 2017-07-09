@@ -1,6 +1,10 @@
 # ssh into rpi
 ssh pi@raspberrypi.local
 
+# run client via ssh
+(git pull && cd client && python detect_motion.py)
+
+
 # copy file from rpi to local
 scp pi@raspberrypi.local:/home/pi/videos/before.h264 /Users/andrhahn
 scp pi@raspberrypi.local:/home/pi/videos/after.h264 /Users/andrhahn

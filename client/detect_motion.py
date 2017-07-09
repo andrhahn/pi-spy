@@ -37,8 +37,8 @@ def detect_motion(camera):
             width = right - left
             height = lower - upper
 
-            print 'width', width
-            print 'height', height
+            #print 'width', width
+            #print 'height', height
 
             #if (width > 40 and height > 40):
             #print '===motion detected...'
@@ -50,7 +50,7 @@ def detect_motion(camera):
 
             capture_time = dt.datetime.now()
 
-            fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+            #fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
             #cloned_current_image.save(fileName)
 
