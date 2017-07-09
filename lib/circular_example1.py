@@ -40,7 +40,8 @@ def detect_motion(camera):
             print 'width', width
             print 'height', height
 
-            if (width > 40 and height > 40):
+            #if (width > 40 and height > 40):
+            if (True):
                 print '===motion detected...'
 
                 # clone current_image
