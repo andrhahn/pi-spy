@@ -81,6 +81,8 @@ def write_video(stream):
 
 with picamera.PiCamera() as camera:
     camera.resolution = (1280, 720)
+    camera.vflip = True
+    camera.hflip = True
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
     camera.start_recording(stream, format='h264')
     try:
