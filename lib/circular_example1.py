@@ -28,7 +28,12 @@ def detect_motion(camera):
 
         rect_coords = diff_image.getbbox()
 
-        print '===rect_coords: ' + rect_coords
+        left,upper,right,lower = rect_coords.getbbox()
+
+        print '===left: ' + left
+        print '===upper: ' + upper
+        print '===right: ' + right
+        print '===lower: ' + lower
 
         if rect_coords != None:
             print '===motion detected. saving image...'
