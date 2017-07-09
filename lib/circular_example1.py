@@ -37,27 +37,27 @@ def detect_motion(camera):
             width = right - left
             height = lower - upper
 
-            area = width * height
+            print 'width', width
+            print 'height', height
 
-            print '===area: ', area
+            if (rect_coords != None):
+                print '===motion detected...'
 
-            print '===motion detected. saving image...'
+                # clone current_image
+                cloned_current_image = current_image.copy()
 
-            # clone current_image
-            cloned_current_image = current_image.copy()
+                ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
 
-            ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
+                capture_time = dt.datetime.now()
 
-            capture_time = dt.datetime.now()
+                fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
-            fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+                cloned_current_image.save(fileName)
 
-            cloned_current_image.save(fileName)
+                # once motion detection is done, make the prior image the current
+                prior_image = current_image
 
-            # once motion detection is done, make the prior image the current
-            prior_image = current_image
-
-            return True
+                return True
         else:
             return False
 
