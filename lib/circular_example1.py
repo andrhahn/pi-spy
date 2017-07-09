@@ -41,7 +41,7 @@ def detect_motion(camera):
 
             #print '===area: ', area
 
-            #print '===motion detected. saving image...'
+            print '===motion detected. saving image...'
 
             # clone current_image
             cloned_current_image = current_image.copy()
@@ -79,7 +79,8 @@ def write_video(stream):
 with picamera.PiCamera() as camera:
     print 'started app...'
 
-    camera.resolution = (1280, 720)
+    #camera.resolution = (1280, 720)
+    camera.resolution = (640, 480)
     camera.vflip = True
     camera.hflip = True
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
