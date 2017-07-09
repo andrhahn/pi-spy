@@ -34,20 +34,12 @@ def detect_motion(camera):
             right = rect_coords[2]
             lower = rect_coords[3]
 
-            #print '===left: ', left
-            #print '===upper: ', upper
-            #print '===right: ', right
-            #print '===lower: ', lower
-
             width = right - left
             height = lower - upper
 
-            #print '===width: ', width
-            #print '===height: ', height
-
             area = width * height
 
-            print '===area: ', area
+            #print '===area: ', area
 
             #print '===motion detected. saving image...'
 
@@ -60,7 +52,7 @@ def detect_motion(camera):
 
             fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
-            #cloned_current_image.save(fileName)
+            cloned_current_image.save(fileName)
 
             # once motion detection is done, make the prior image the current
             prior_image = current_image
