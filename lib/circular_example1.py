@@ -2,6 +2,7 @@ import io
 import random
 import picamera
 from PIL import Image
+from PIL import ImageChops
 
 prior_image = None
 
@@ -17,6 +18,12 @@ def detect_motion(camera):
         current_image = Image.open(stream)
         # Compare current_image to prior_image to detect motion. This is
         # left as an exercise for the reader!
+
+        diff = ImageChops.difference(current_image, prior_image)
+
+        print '==diff: ', diff
+
+
         result = random.randint(0, 10) == 0
         # Once motion detection is done, make the prior image the current
         prior_image = current_image
