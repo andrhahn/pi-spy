@@ -1,39 +1,32 @@
 # pi-spy
 
-Pure python Motion detector for Raspberry Pi 3 Model B with camera module
+Python motion detector for Raspberry Pi
 
-Detects motion then uplaods image and video to S3 or Vimeo then sends SMS message via Twilio
+Currently tested on RPI 3 Model B
 
-Requires Amazon S3 and Twilio accounts (both are free)
+Requires RPI camera module
+
+[Client documentation](client/README.md)
+[Server documentation](server/README.md)
 
 ### Getting Started
 
-##### RPI Setup
+##### Setup
     sudo apt update
     
     sudo apt full-upgrade
     
     sudo pip install picamera
     
-    sudo pip install boto3
-    
-    sudo pip install PyVimeo
+##### Run client
+    cd client
 
-    sudo pip install twilio
-    
-    create app_config from app_config_template
-    
-    create ~/.aws/credentials from credentials_template
-    
-##### Run pispy
-    cd pi-spy
+    python detect_motion.py
 
-    (git pull && cd lib && python pispy.py)
- 
-##### Run test
-    cd pi-spy
+##### Run server
+    cd server
 
-    (git pull && cd lib && python test.py)
+    python server.py
     
 ### License
 
