@@ -16,7 +16,7 @@
     mkdir -p /home/pi/pi-spy-files/videos
     
     sudo crontab -e
-    */1 * * * * python /home/pi/pi-spy/copy_files.py > /home/pi/pi-spy-files/logs/copy_files.log 2>&1
+    */1 * * * * python /home/pi/client/pi-spy/copy_files.py >> /home/pi/pi-spy-files/logs/copy_files.log 2>&1
     
 ##### Run client
     cd client
