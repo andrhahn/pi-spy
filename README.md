@@ -13,7 +13,7 @@ Requires Amazon S3 and Twilio accounts (both are free)
     
     sudo apt full-upgrade
     
-    sudo apt-get install python-picamera
+    sudo pip install picamera
     
     sudo pip install boto3
     
