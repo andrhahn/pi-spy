@@ -62,6 +62,8 @@ def write_video(stream):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
+    print 'started app'
+
     camera.resolution = (1280, 720)
     camera.vflip = True
     camera.hflip = True
