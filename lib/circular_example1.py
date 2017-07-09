@@ -39,7 +39,7 @@ def detect_motion(camera):
 
             area = width * height
 
-            #print '===area: ', area
+            print '===area: ', area
 
             print '===motion detected. saving image...'
 
