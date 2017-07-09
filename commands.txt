@@ -1,0 +1,6 @@
+# ssh into rpi
+ssh pi@raspberrypi.local
+
+# copy file from rpi to local
+scp pi@raspberrypi.local:/home/pi/videos/before.h264 /Users/andrhahn
+scp pi@raspberrypi.local:/home/pi/videos/after.h264 /Users/andrhahn

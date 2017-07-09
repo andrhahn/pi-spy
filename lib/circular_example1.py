@@ -41,7 +41,7 @@ def detect_motion(camera):
             print 'height', height
 
             #if (width > 40 and height > 40):
-            print '===motion detected...'
+            #print '===motion detected...'
 
             # clone current_image
             cloned_current_image = current_image.copy()
@@ -89,7 +89,10 @@ with picamera.PiCamera() as camera:
     try:
         while True:
             camera.wait_recording(1)
+
             if detect_motion(camera):
+                print 'Recording motion - STARTED'
+
                 # if motion is detected, split the recording to record the frames "after" motion
                 camera.split_recording('/home/pi/videos/after.h264')
 
@@ -102,5 +105,7 @@ with picamera.PiCamera() as camera:
 
                 # once motion is no longer detected, split recording back to the in-memory circular buffer
                 camera.split_recording(stream)
+
+                print 'Recording motion - COMPLETED'
     finally:
         camera.stop_recording()
