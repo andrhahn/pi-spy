@@ -100,7 +100,8 @@ def detect_motion(camera):
     # stream = io.BytesIO()
 
     with picamera.array.PiRGBArray(camera) as stream:
-        camera.capture(stream, format='rgb', use_video_port=True)
+        #camera.capture(stream, format='rgb', use_video_port=True)
+        camera.capture(stream, format='jpeg', use_video_port=True)
 
         stream.seek(0)
 

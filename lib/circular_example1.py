@@ -9,7 +9,7 @@ prior_image = None
 def detect_motion(camera):
     global prior_image
     stream = io.BytesIO()
-    camera.capture(stream, format='rgb', use_video_port=True)
+    camera.capture(stream, format='jpeg', use_video_port=True)
     stream.seek(0)
     if prior_image is None:
         prior_image = Image.open(stream)
