@@ -10,11 +10,16 @@ prior_image = None
 
 def detect_motion(camera):
     global prior_image
+
     stream = io.BytesIO()
+
     camera.capture(stream, format='jpeg', use_video_port=True)
+
     stream.seek(0)
+
     if prior_image is None:
         prior_image = Image.open(stream)
+
         return False
     else:
         current_image = Image.open(stream)
@@ -23,15 +28,15 @@ def detect_motion(camera):
 
         rect_coords = diff_image.getbbox()
 
-        if rect_coords != None: # todo also check for rect dimensions.  also clone image?
+        print '===rect_coords: ' + rect_coords
+
+        if rect_coords != None:
             print '===motion detected. saving image...'
 
             # clone current_image
             cloned_current_image = current_image.copy()
 
             ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
-
-            print 'about to save image'
 
             capture_time = dt.datetime.now()
 
@@ -62,7 +67,7 @@ def write_video(stream):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
-    print 'started app'
+    print 'started app...'
 
     camera.resolution = (1280, 720)
     camera.vflip = True
@@ -73,7 +78,7 @@ with picamera.PiCamera() as camera:
         while True:
             camera.wait_recording(1)
             if detect_motion(camera):
-                print('Motion detected!')
+                #print('Motion detected!')
                 # As soon as we detect motion, split the recording to
                 # record the frames "after" motion
                 camera.split_recording('after.h264')
@@ -83,7 +88,7 @@ with picamera.PiCamera() as camera:
                 # recording back to the in-memory circular buffer
                 while detect_motion(camera):
                     camera.wait_recording(1)
-                print('Motion stopped!')
+                #print('Motion stopped!')
                 camera.split_recording(stream)
 
                 # todo: write the saved video somewhere...
