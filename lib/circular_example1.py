@@ -3,6 +3,8 @@ import random
 import picamera
 from PIL import Image
 from PIL import ImageChops
+from PIL import ImageOps
+from PIL import ImageDraw
 
 prior_image = None
 
@@ -19,15 +21,39 @@ def detect_motion(camera):
         # Compare current_image to prior_image to detect motion. This is
         # left as an exercise for the reader!
 
-        diff = ImageChops.difference(current_image, prior_image)
+        #diff = ImageChops.difference(current_image, prior_image)
+        #print '==diff: ', diff
 
-        print '==diff: ', diff
+        #compare current image with Master and make a box around the change
+        diff_image = ImageOps.posterize(ImageOps.grayscale(ImageChops.difference(prior_image, current_image)) ,1)
 
+        rect_coords = diff_image.getbbox()
 
-        result = random.randint(0, 10) == 0
+        if rect_coords != None:
+            print '===rectangle found.  about to draw yellow line'
+
+            ImageDraw.Draw(current_image).rectangle(rect_coords, outline="yellow", fill=None)
+
+            print 'about to save image'
+
+            current_image.save('/home/pi/result.jpeg')
+
+            print 'saved image'
+            # Once motion detection is done, make the prior image the current
+            #prior_image = current_image
+
+            return True
+        else:
+            print '===rectangle not found'
+
+            return False
+
+        #result = False
+        #result = random.randint(0, 10) == 0
+
         # Once motion detection is done, make the prior image the current
-        prior_image = current_image
-        return result
+        #prior_image = current_image
+        #return result
 
 def write_video(stream):
     # Write the entire content of the circular buffer to disk. No need to
