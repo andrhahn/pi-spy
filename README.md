@@ -6,9 +6,9 @@ Currently tested on RPI 3 Model B
 
 Requires RPI camera module
 
-[Client documentation](client/README.md)
+[Client documentation](client/)
 
-[Server documentation](server/README.md)
+[Server documentation](server//)
     
 ### License
 
