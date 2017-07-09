@@ -5,6 +5,7 @@ from PIL import Image
 from PIL import ImageChops
 from PIL import ImageOps
 from PIL import ImageDraw
+import datetime as dt
 
 prior_image = None
 
@@ -36,7 +37,12 @@ def detect_motion(camera):
 
             print 'about to save image'
 
-            current_image.save('/home/pi/result.jpeg')
+            capture_time = dt.datetime.now()
+
+            fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+
+            #current_image.save('/home/pi/images/result.jpeg')
+            current_image.save(fileName)
 
             print 'saved image'
             # Once motion detection is done, make the prior image the current
