@@ -41,29 +41,28 @@ def detect_motion(camera):
             print 'height', height
 
             #if (width > 40 and height > 40):
-            if (True):
-                print '===motion detected...'
+            print '===motion detected...'
 
-                # clone current_image
-                cloned_current_image = current_image.copy()
+            # clone current_image
+            cloned_current_image = current_image.copy()
 
-                ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
+            ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
 
-                capture_time = dt.datetime.now()
+            capture_time = dt.datetime.now()
 
-                fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+            fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
-                cloned_current_image.save(fileName)
+            #cloned_current_image.save(fileName)
 
-                # once motion detection is done, make the prior image the current
-                prior_image = current_image
+            # once motion detection is done, make the prior image the current
+            prior_image = current_image
 
-                return True
+            return True
         else:
             return False
 
 def write_video(stream):
-    with io.open('before.h264', 'wb') as output:
+    with io.open('/home/pi/videos/before.h264', 'wb') as output:
         for frame in stream.frames:
             if frame.frame_type == picamera.PiVideoFrameType.sps_header:
                 stream.seek(frame.position)
@@ -80,29 +79,28 @@ def write_video(stream):
 with picamera.PiCamera() as camera:
     print 'started app...'
 
-    #camera.resolution = (1280, 720)
-    camera.resolution = (640, 480)
+    camera.resolution = (1280, 720)
     camera.vflip = True
     camera.hflip = True
+
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
+
     camera.start_recording(stream, format='h264')
     try:
         while True:
             camera.wait_recording(1)
             if detect_motion(camera):
-                #print('Motion detected!')
-                # As soon as we detect motion, split the recording to
-                # record the frames "after" motion
-                camera.split_recording('after.h264')
-                # Write the 10 seconds "before" motion to disk as well
+                # if motion is detected, split the recording to record the frames "after" motion
+                camera.split_recording('/home/pi/videos/after.h264')
+
+                # write the 10 seconds "before" motion to disk as well
                 write_video(stream)
-                # Wait until motion is no longer detected, then split
-                # recording back to the in-memory circular buffer
+
+                # record video as long as there is motion being detected
                 while detect_motion(camera):
                     camera.wait_recording(1)
-                #print('Motion stopped!')
-                camera.split_recording(stream)
 
-                # todo: write the saved video somewhere...
+                # once motion is no longer detected, split recording back to the in-memory circular buffer
+                camera.split_recording(stream)
     finally:
         camera.stop_recording()
