@@ -49,7 +49,7 @@ def detect_motion(camera):
 
             print '===area: ', area
 
-            print '===motion detected. saving image...'
+            #print '===motion detected. saving image...'
 
             # clone current_image
             cloned_current_image = current_image.copy()
@@ -60,7 +60,7 @@ def detect_motion(camera):
 
             fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
-            cloned_current_image.save(fileName)
+            #cloned_current_image.save(fileName)
 
             # once motion detection is done, make the prior image the current
             prior_image = current_image
