@@ -9,9 +9,14 @@
     
     sudo pip install picamera
     
-    mkdir -p ~/pi-spy-files/images
+    mkdir -p /home/pi/pi-spy-files/logs
     
-    mkdir -p ~/pi-spy-files/videos
+    mkdir -p /home/pi/pi-spy-files/images
+    
+    mkdir -p /home/pi/pi-spy-files/videos
+    
+    sudo crontab -e
+    */1 * * * * python /home/pi/pi-spy/copy_files.py > /home/pi/pi-spy-files/logs/copy_files.log 2>&1
     
 ##### Run client
     cd client
