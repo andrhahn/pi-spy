@@ -9,9 +9,9 @@
     
     sudo pip install picamera
     
-    mkdir ~/images
+    mkdir -p ~/pi-spy-files/images
     
-    mkdir ~/videos
+    mkdir -p ~/pi-spy-files/videos
     
 ##### Run client
     cd client

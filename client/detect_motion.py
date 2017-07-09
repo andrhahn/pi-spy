@@ -62,7 +62,7 @@ def detect_motion(camera):
             return False
 
 def write_video(stream, capture_time):
-    with io.open('/home/pi/videos/before_' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264', 'wb') as output:
+    with io.open('/home/pi/pi-spy-files/videos/before_' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264', 'wb') as output:
         for frame in stream.frames:
             if frame.frame_type == picamera.PiVideoFrameType.sps_header:
                 stream.seek(frame.position)
@@ -96,7 +96,7 @@ with picamera.PiCamera() as camera:
                 capture_time = dt.datetime.now()
 
                 # if motion is detected, split the recording to record the frames "after" motion
-                camera.split_recording('/home/pi/videos/after_' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264')
+                camera.split_recording('/home/pi/pi-spy-files/videos/after_' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264')
 
                 # write the 10 seconds "before" motion to disk as well
                 write_video(stream, capture_time)
