@@ -93,7 +93,7 @@ with picamera.PiCamera() as camera:
 
                 fileName = capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
-                filePath = '/home/pi/images/' + fileName
+                filePath = '/home/pi/pi-spy-files/images/' + fileName
 
                 # save file to filesystem
                 captured_image.save(fileName)
