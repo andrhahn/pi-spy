@@ -74,6 +74,7 @@ with picamera.PiCamera() as camera:
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
 
     camera.start_recording(stream, format='h264')
+
     try:
         while True:
             camera.wait_recording(1)
