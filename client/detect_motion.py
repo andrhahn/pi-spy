@@ -1,4 +1,5 @@
 import io
+import os
 import picamera
 import datetime as dt
 from PIL import Image
@@ -111,6 +112,9 @@ with picamera.PiCamera() as camera:
                 messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/' + s3_bucket_name + '/' + fileName)
 
                 print 'Twilio message sent...'
+
+                # copy to server
+                # os.system("scp " + filePath + " pi@raspberrypi.local:/home/pi/pi-spy-files/images")
 
                 # record video as long as there is motion being detected
                 while detect_motion(camera):

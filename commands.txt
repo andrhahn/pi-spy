@@ -10,3 +10,6 @@ scp pi@raspberrypi.local:/home/pi/pi-spy-files/videos/after_2017-07-09T19.48.11.
 
 # copy file from local to rpi
 scp /Users/andrhahn/projects/pi-spy/app_config pi@raspberrypi.local:/home/pi/pi-spy
+
+# enable auto login via ssh keys
+http://support.modwest.com/content/20/90/en/how-do-i-get-ssh-to-authenticate-me-via-publicprivate-keypairs-instead-of-by-password.html
