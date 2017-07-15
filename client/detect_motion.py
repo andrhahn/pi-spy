@@ -5,13 +5,22 @@ from PIL import Image
 from PIL import ImageChops
 from PIL import ImageOps
 from PIL import ImageDraw
+import ConfigParser
 
 import messageservice
+import fileservice
+
+parser = ConfigParser.SafeConfigParser()
+parser.read('../app_config')
 
 prior_image = None
+captured_image = None
+rect_coords = None
 
 def detect_motion(camera):
     global prior_image
+    global captured_image
+    global rect_coords
 
     stream = io.BytesIO()
 
@@ -25,41 +34,14 @@ def detect_motion(camera):
         return False
     else:
         current_image = Image.open(stream)
-        # compare current_image with prior_image and make a box around the change
+
         diff_image = ImageOps.posterize(ImageOps.grayscale(ImageChops.difference(prior_image, current_image)) ,1)
 
         rect_coords = diff_image.getbbox()
 
         if rect_coords != None:
-            left = rect_coords[0]
-            upper = rect_coords[1]
-            right = rect_coords[2]
-            lower = rect_coords[3]
+            captured_image = current_image.copy()
 
-            width = right - left
-            height = lower - upper
-
-            #print 'width', width
-            #print 'height', height
-
-            #if (width > 40 and height > 40):
-            #print '===motion detected...'
-
-            # clone current_image
-            cloned_current_image = current_image.copy()
-
-            ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
-
-            capture_time = dt.datetime.now()
-
-            #messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + '/' + fileName + '.h264', s3_bucket_url + '/' + fileName + '.jpg')
-            messageservice.sendMessage('Motion detected!', 'https://upload.wikimedia.org/wikipedia/en/5/58/Penny_test.jpg')
-
-            #fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
-
-            #cloned_current_image.save(fileName)
-
-            # once motion detection is done, make the prior image the current
             prior_image = current_image
 
             return True
@@ -105,6 +87,28 @@ with picamera.PiCamera() as camera:
 
                 # write the 10 seconds "before" motion to disk as well
                 write_video(stream, capture_time)
+
+                # draw box around the image
+                ImageDraw.Draw(captured_image).rectangle(rect_coords, outline="yellow", fill=None)
+
+                fileName = capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+
+                filePath = '/home/pi/images/' + fileName
+
+                # save file to filesystem
+                captured_image.save(fileName)
+
+                # upload image to s3
+                s3_bucket_name = parser.get('s3', 'bucket_name')
+
+                print 'Image uploaded to s3...'
+
+                fileservice.uploadFile(s3_bucket_name, fileName, captured_image, 'image/jpeg')
+
+                # send mms
+                messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/' + s3_bucket_name + '/' + fileName)
+
+                print 'Twilio message sent...'
 
                 # record video as long as there is motion being detected
                 while detect_motion(camera):

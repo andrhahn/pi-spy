@@ -14,17 +14,10 @@ def sendMessage(body, media_url):
 
     client = TwilioRestClient(accountSid, authToken)
 
-    # client.messages.create(
-    #     body=body,
-    #     from_=fromNumber,
-    #     to=toNumber,
-    #     media_url=media_url
-    # )
-
     client.messages.create(
         body=body,
         from_=fromNumber,
-        to=toNumber
+        to=toNumber,
+        media_url=media_url
     )
 
-    print 'Twilio message sent...'
