@@ -114,9 +114,6 @@ with picamera.PiCamera() as camera:
 
                 print 'Twilio message sent...'
 
-                # copy to server
-                # os.system("scp " + filePath + " pi@raspberrypi.local:/home/pi/pi-spy-files/images")
-
                 # record video as long as there is motion being detected
                 while detect_motion(camera):
                     camera.wait_recording(1)
