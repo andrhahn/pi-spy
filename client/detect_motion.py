@@ -101,9 +101,9 @@ with picamera.PiCamera() as camera:
                 # upload image to s3
                 s3_bucket_name = parser.get('s3', 'bucket_name')
 
-                print 'Image uploaded to s3...'
+                fileservice.uploadFile(filePath, s3_bucket_name, fileName, 'image/jpeg')
 
-                fileservice.uploadFile(s3_bucket_name, fileName, captured_image, 'image/jpeg')
+                print 'Image uploaded to s3...'
 
                 # send mms
                 messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/' + s3_bucket_name + '/' + fileName)
