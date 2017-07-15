@@ -16,7 +16,7 @@ parser.read('../app_config')
 
 prior_image = None
 captured_image = None
-captured_images = None
+captured_images = []
 rect_coords = None
 
 def detect_motion(camera):
