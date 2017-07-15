@@ -6,6 +6,8 @@ from PIL import ImageChops
 from PIL import ImageOps
 from PIL import ImageDraw
 
+import messageservice
+
 prior_image = None
 
 def detect_motion(camera):
@@ -49,6 +51,9 @@ def detect_motion(camera):
             ImageDraw.Draw(cloned_current_image).rectangle(rect_coords, outline="yellow", fill=None)
 
             capture_time = dt.datetime.now()
+
+            #messageservice.sendMessage('Motion detected!\n' + s3_bucket_url + '/' + fileName + '.h264', s3_bucket_url + '/' + fileName + '.jpg')
+            messageservice.sendMessage('Motion detected!', 'https://upload.wikimedia.org/wikipedia/en/5/58/Penny_test.jpg')
 
             #fileName = '/home/pi/images/' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
