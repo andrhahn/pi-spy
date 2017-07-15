@@ -16,11 +16,13 @@ parser.read('../app_config')
 
 prior_image = None
 captured_image = None
+captured_images = None
 rect_coords = None
 
 def detect_motion(camera):
     global prior_image
     global captured_image
+    global captured_images
     global rect_coords
 
     stream = io.BytesIO()
@@ -42,6 +44,9 @@ def detect_motion(camera):
 
         if rect_coords != None:
             captured_image = current_image.copy()
+
+            if len(captured_images) <= 3:
+                captured_images.append(captured_image)
 
             prior_image = current_image
 
@@ -81,6 +86,8 @@ with picamera.PiCamera() as camera:
 
             if detect_motion(camera):
                 print 'Recording motion - STARTED'
+
+                captured_images = []
 
                 capture_time = dt.datetime.now()
 
