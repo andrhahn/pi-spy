@@ -101,7 +101,7 @@ with picamera.PiCamera() as camera:
                 # upload image to s3
                 s3_bucket_name = parser.get('s3', 'bucket_name')
 
-                fileservice.uploadFile(filePath, s3_bucket_name, fileName, 'image/jpeg')
+                fileservice.uploadFile(s3_bucket_name, filePath, fileName, 'image/jpeg')
 
                 print 'Image uploaded to s3...'
 

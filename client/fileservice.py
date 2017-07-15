@@ -2,9 +2,9 @@
 
 import boto3
 
-def uploadFile(fileName, bucketName, keyName, contentType):
+def uploadFile(bucketName, fileName, key, contentType):
     s3 = boto3.resource('s3')
 
     bucket = s3.Bucket(bucketName)
 
-    bucket.upload_file(fileName, bucketName, keyName, ExtraArgs={'ACL': 'public-read', 'ContentType': contentType})
+    bucket.upload_file(fileName, key, ExtraArgs={'ACL': 'public-read', 'ContentType': contentType})
