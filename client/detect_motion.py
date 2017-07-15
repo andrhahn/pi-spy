@@ -96,7 +96,9 @@ with picamera.PiCamera() as camera:
                 filePath = '/home/pi/pi-spy-files/images/' + fileName
 
                 # save file to filesystem
-                captured_image.save(fileName)
+                captured_image.save(filePath)
+
+                print 'saved image to images folder'
 
                 # upload image to s3
                 s3_bucket_name = parser.get('s3', 'bucket_name')
