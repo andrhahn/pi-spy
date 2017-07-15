@@ -7,3 +7,6 @@ ssh pi@raspberrypi.local
 # copy file from rpi to local
 scp pi@raspberrypi.local:/home/pi/pi-spy-files/videos/before_2017-07-09T19.48.11.h264 /Users/andrhahn
 scp pi@raspberrypi.local:/home/pi/pi-spy-files/videos/after_2017-07-09T19.48.11.h264 /Users/andrhahn
+
+# copy file from local to rpi
+scp /Users/andrhahn/projects/pi-spy/app_config pi@raspberrypi.local:/home/pi/pi-spy
