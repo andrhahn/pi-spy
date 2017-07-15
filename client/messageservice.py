@@ -20,4 +20,3 @@ def sendMessage(body, media_url):
         to=toNumber,
         media_url=media_url
     )
-
