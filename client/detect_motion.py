@@ -2,6 +2,7 @@ import io
 import os
 import picamera
 import datetime as dt
+import uuid
 from PIL import Image
 from PIL import ImageChops
 from PIL import ImageOps
@@ -50,15 +51,17 @@ def detect_motion(camera):
             # draw box around the image
             ImageDraw.Draw(captured_image).rectangle(rect_coords, outline="yellow", fill=None)
 
-            file_name = capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+            image_guid = str(uuid.uuid4())
+
+            captured_image_file_name = image_guid + '.jpg'
 
             # save file to file system
-            captured_image.save(images_file_path + '/' + file_name)
+            captured_image.save(images_file_path + '/' + captured_image_file_name)
 
             print 'saved image to images folder'
 
             if len(captured_image_file_names) < 5:
-                captured_image_file_names.append(file_name)
+                captured_image_file_names.append(captured_image_file_name)
 
             prior_image = current_image
 
@@ -66,8 +69,8 @@ def detect_motion(camera):
         else:
             return False
 
-def write_video(stream, capture_time):
-    with io.open('/home/pi/pi-spy-files/videos/before_' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264', 'wb') as output:
+def write_video(stream, video_guid):
+    with io.open('/home/pi/pi-spy-files/videos/before_' + video_guid + '.h264', 'wb') as output:
         for frame in stream.frames:
             if frame.frame_type == picamera.PiVideoFrameType.sps_header:
                 stream.seek(frame.position)
@@ -101,13 +104,13 @@ with picamera.PiCamera() as camera:
 
                 captured_image_file_names = []
 
-                capture_time = dt.datetime.now()
+                video_guid = str(uuid.uuid4())
 
                 # if motion is detected, split the recording to record the frames "after" motion
-                camera.split_recording('/home/pi/pi-spy-files/videos/after_' + capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.h264')
+                camera.split_recording('/home/pi/pi-spy-files/videos/after_' + video_guid + '.h264')
 
                 # write the 10 seconds "before" motion to disk as well
-                write_video(stream, capture_time)
+                write_video(stream, video_guid)
 
                 # record video as long as there is motion being detected
                 while detect_motion(camera):
