@@ -60,8 +60,6 @@ def process_images(captured_image_file_names, video_guid):
     # upload video to vimeo
     video_uri = vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
 
-    print '==foo: ' + 'https://player.vimeo.com/video/' + video_uri.split('/')[2]
-
     # send mms
     twilio_service.send_message('Motion detected!\n' + 'https://player.vimeo.com/video/' + video_uri.split('/')[2], media_urls)
 
