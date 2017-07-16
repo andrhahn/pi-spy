@@ -39,8 +39,6 @@ def create_dir(path):
 def save_image(file_name):
     captured_image.save(images_path + '/' + file_name)
 
-    print 'Saved image: ' + images_path + '/' + file_name
-
 def process_images(captured_image_file_names, video_guid):
     s3_host_name = 'http://s3.amazonaws.com'
 
@@ -59,7 +57,7 @@ def process_images(captured_image_file_names, video_guid):
         media_urls.append(media_url)
 
     # todo: concat and upload before.h264
-    # upload video to twilio
+    # upload video to vimeo
     video_uri = vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
 
     # send mms
