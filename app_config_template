@@ -1,13 +1,10 @@
-[s3]
-bucket_name =
+[default]
+images_path =
+videos_path =
 
-[vimeo]
-token =
-key =
-secret =
+s3_bucket_name =
 
-[twilio]
-account_sid =
-auth_token =
-from_number =
-to_number =
+twilio_account_sid =
+twilio_auth_token =
+twilio_from_number =
+twilio_to_number =

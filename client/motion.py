@@ -1,4 +1,3 @@
-import ConfigParser
 import io
 import picamera
 import uuid
@@ -7,13 +6,13 @@ from PIL import ImageChops
 from PIL import ImageDraw
 from PIL import ImageOps
 
+import configservice
 import fileservice
 import messageservice
 
-parser = ConfigParser.SafeConfigParser()
-parser.read('../app_config')
+images_path = configservice.get_config("images_path")
+videos_path = configservice.get_config("videos_path")
 
-images_file_path = '/home/pi/pi-spy-files/images'
 prior_image = None
 captured_image = None
 captured_image_file_names = []
@@ -53,9 +52,9 @@ def detect_motion(camera):
             captured_image_file_name = image_guid + '.jpg'
 
             # save file to file system
-            captured_image.save(images_file_path + '/' + captured_image_file_name)
+            captured_image.save(images_path + '/' + captured_image_file_name)
 
-            print 'Saved image: ' + images_file_path + '/' + captured_image_file_name
+            print 'Saved image: ' + images_path + '/' + captured_image_file_name
 
             if len(captured_image_file_names) < 5:
                 captured_image_file_names.append(captured_image_file_name)
@@ -68,7 +67,7 @@ def detect_motion(camera):
 
 
 def write_video(stream, video_guid):
-    with io.open('/home/pi/pi-spy-files/videos/before_' + video_guid + '.h264', 'wb') as output:
+    with io.open(videos_path + '/before_' + video_guid + '.h264', 'wb') as output:
         for frame in stream.frames:
             if frame.frame_type == picamera.PiVideoFrameType.sps_header:
                 stream.seek(frame.position)
@@ -107,7 +106,7 @@ with picamera.PiCamera() as camera:
                 video_guid = str(uuid.uuid4())
 
                 # if motion is detected, split the recording to record the frames "after" motion
-                camera.split_recording('/home/pi/pi-spy-files/videos/after_' + video_guid + '.h264')
+                camera.split_recording(videos_path + '/after_' + video_guid + '.h264')
 
                 # write the 10 seconds "before" motion to disk as well
                 write_video(stream, video_guid)
@@ -125,20 +124,17 @@ with picamera.PiCamera() as camera:
 
                 s3_host_name = 'http://s3.amazonaws.com'
 
-                s3_bucket_name = parser.get('s3', 'bucket_name')
+                s3_bucket_name = configservice.get_config('s3_bucket_name')
 
                 for image_file_name in captured_image_file_names:
                     # upload image to s3
-                    fileservice.uploadFile(s3_bucket_name, images_file_path + '/' + image_file_name, image_file_name, 'image/jpeg')
+                    fileservice.uploadFile(s3_bucket_name, images_path + '/' + image_file_name, 'images/' + image_file_name, 'image/jpeg')
 
                     media_url = s3_host_name + '/' + s3_bucket_name + '/' + image_file_name
 
                     print 'Uploaded image to s3: ' + media_url
 
                     media_urls.append(media_url)
-
-                for mu in media_urls:
-                    print 'media url: ' + mu
 
                 # send mms
                 messageservice.sendMessage('Motion detected!', media_urls)
