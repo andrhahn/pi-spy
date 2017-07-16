@@ -153,7 +153,7 @@ with picamera.PiCamera() as camera:
             camera.wait_recording(1)
 
             if detect_motion(camera):
-                print 'Recording motion - start'
+                print 'Recording motion - started'
 
                 captured_image_file_names = []
 
@@ -170,7 +170,7 @@ with picamera.PiCamera() as camera:
                 while detect_motion(camera):
                     camera.wait_recording(1)
 
-                print 'Recording motion - complete'
+                print 'Recording motion - completed'
 
                 # once motion is done, start recording to "before" stream again
                 camera.split_recording(stream)
