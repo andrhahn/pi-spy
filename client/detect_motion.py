@@ -85,8 +85,6 @@ def write_video(stream, video_guid):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
-    print 'started app...'
-
     camera.resolution = (1280, 720)
     camera.vflip = True
     camera.hflip = True
@@ -97,6 +95,8 @@ with picamera.PiCamera() as camera:
 
     try:
         while True:
+            print 'Started motion detection...'
+
             camera.wait_recording(1)
 
             if detect_motion(camera):
