@@ -66,9 +66,9 @@ def process_images(captured_image_file_names, video_guid):
     print 'Twilio message sent...'
 
     # upload video to twilio # todo: concat and upload before.h264
-    vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
+    video_uri = vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
 
-    print 'Uploaded video to vimeo...'
+    print 'Uploaded video to vimeo: ' + video_uri
 
 def detect_motion(camera):
     global prior_image

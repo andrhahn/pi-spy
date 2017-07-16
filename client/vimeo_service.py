@@ -14,3 +14,5 @@ def upload_file(file_name):
     video_uri = vimeo_client.upload(file_name)
 
     vimeo_client.patch(video_uri, data={'name': 'Motion detected: ' + file_name, 'description': 'Motion detected...'})
+
+    return video_uri
