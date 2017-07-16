@@ -1,6 +1,7 @@
 [default]
 images_path =
 videos_path =
+logs_path =
 
 s3_bucket_name =
 

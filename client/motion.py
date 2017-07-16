@@ -1,3 +1,4 @@
+import os
 import io
 import picamera
 import uuid
@@ -12,6 +13,16 @@ import messageservice
 
 images_path = configservice.get_config("images_path")
 videos_path = configservice.get_config("videos_path")
+logs_path = configservice.get_config("logs_path")
+
+if not os.path.exists(os.path.dirname(images_path)):
+    os.makedirs(os.path.dirname(images_path))
+
+if not os.path.exists(os.path.dirname(videos_path)):
+    os.makedirs(os.path.dirname(videos_path))
+
+if not os.path.exists(os.path.dirname(logs_path)):
+    os.makedirs(os.path.dirname(logs_path))
 
 prior_image = None
 captured_image = None
