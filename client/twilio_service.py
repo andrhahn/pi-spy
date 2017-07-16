@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from twilio.rest import TwilioRestClient
+from twilio.rest import Client
 import config_service
 
 def send_message(body, media_url):
@@ -9,11 +9,13 @@ def send_message(body, media_url):
     from_number = config_service.get_config('twilio_from_number')
     to_number = config_service.get_config('twilio_to_number')
 
-    client = TwilioRestClient(account_sid, auth_token)
+    client = Client(account_sid, auth_token)
 
-    client.messages.create(
+    message = client.messages.create(
         body=body,
         from_=from_number,
         to=to_number,
         media_url=media_url
     )
+
+    return message
