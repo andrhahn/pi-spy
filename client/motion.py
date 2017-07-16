@@ -49,26 +49,21 @@ def process_images(captured_image_file_names, video_guid):
     media_urls = []
 
     for image_file_name in captured_image_file_names:
-        # upload image to s3
         key = 'images/' + image_file_name
 
+        # upload image to s3
         s3_service.upload_file(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
 
         media_url = s3_host_name + '/' + s3_bucket_name + '/' + key
 
-        print 'Uploaded image to s3: ' + media_url
-
         media_urls.append(media_url)
 
-    # send mms
-    twilio_service.send_message('Motion detected!', media_urls)
-
-    print 'Twilio message sent...'
-
-    # upload video to twilio # todo: concat and upload before.h264
+    # todo: concat and upload before.h264
+    # upload video to twilio
     video_uri = vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
 
-    print 'Uploaded video to vimeo: ' + video_uri
+    # send mms
+    twilio_service.send_message('Motion detected!\n' + 'https://player.vimeo.com/video/' + video_uri.split('/')[2], media_urls)
 
 def detect_motion(camera):
     global prior_image
