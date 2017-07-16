@@ -45,8 +45,7 @@ def detect_motion(camera):
         if rect_coords != None:
             captured_image = current_image.copy()
 
-            if len(captured_images) <= 3:
-                captured_images.append(captured_image)
+            captured_images.append(captured_image)
 
             prior_image = current_image
 
@@ -102,24 +101,17 @@ with picamera.PiCamera() as camera:
 
                 fileName = capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
 
-                filePath = '/home/pi/pi-spy-files/images/' + fileName
+                filePath = '/home/pi/pi-spy-files/images'
 
                 # save file to filesystem
-                captured_image.save(filePath)
+                captured_image.save(filePath + '/' + fileName)
 
                 print 'saved image to images folder'
 
-                # upload image to s3
-                s3_bucket_name = parser.get('s3', 'bucket_name')
-
-                fileservice.uploadFile(s3_bucket_name, filePath, fileName, 'image/jpeg')
-
-                print 'Image uploaded to s3...'
-
-                # send mms
-                messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/' + s3_bucket_name + '/' + fileName)
-
-                print 'Twilio message sent...'
+                # add image to captured_images list
+                #if len(captured_images) < 5:
+                    #captured_images.append(fileName)
+                #captured_images.append(fileName)
 
                 # record video as long as there is motion being detected
                 while detect_motion(camera):
@@ -127,6 +119,21 @@ with picamera.PiCamera() as camera:
 
                 # once motion is no longer detected, split recording back to the in-memory circular buffer
                 camera.split_recording(stream)
+
+                s3_bucket_name = parser.get('s3', 'bucket_name')
+
+                for image_file_name in captured_images:
+                    print '===image file in array:' + image_file_name
+
+                    # upload image to s3
+                    #fileservice.uploadFile(s3_bucket_name, filePath + '/' + image_file_name, image_file_name, 'image/jpeg')
+
+                    print 'Image uploaded to s3...'
+#
+                # send mms # todo send list
+                #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/' + s3_bucket_name + '/' + fileName)
+
+                print 'Twilio message sent...'
 
                 print 'Recording motion - COMPLETED'
     finally:
