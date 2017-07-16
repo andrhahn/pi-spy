@@ -11,7 +11,7 @@ def process_new_images():
         # do your stuff
         print 'File name: ' + filename
 
-schedule.every(5).seconds.do(process_new_images)
+schedule.every(10).seconds.do(process_new_images)
 
 while True:
     schedule.run_pending()
