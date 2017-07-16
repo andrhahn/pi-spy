@@ -15,17 +15,23 @@ images_path = configservice.get_config("images_path")
 videos_path = configservice.get_config("videos_path")
 logs_path = configservice.get_config("logs_path")
 
-if not os.path.exists(os.path.dirname(images_path)):
-    os.makedirs(os.path.dirname(images_path))
-    print 'creating dir'
-else:
-    print 'dir exists'
+try:
+    os.makedirs(images_path)
+except OSError:
+    if not os.path.isdir(images_path):
+        raise
 
-if not os.path.exists(os.path.dirname(videos_path)):
-    os.makedirs(os.path.dirname(videos_path))
+try:
+    os.makedirs(videos_path)
+except OSError:
+    if not os.path.isdir(videos_path):
+        raise
 
-if not os.path.exists(os.path.dirname(logs_path)):
-    os.makedirs(os.path.dirname(logs_path))
+try:
+    os.makedirs(logs_path)
+except OSError:
+    if not os.path.isdir(logs_path):
+        raise
 
 prior_image = None
 captured_image = None
