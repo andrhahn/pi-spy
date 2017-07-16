@@ -116,24 +116,26 @@ with picamera.PiCamera() as camera:
                 while detect_motion(camera):
                     camera.wait_recording(1)
 
+                print 'Recording motion - COMPLETED'
+
                 # once motion is no longer detected, split recording back to the in-memory circular buffer
                 camera.split_recording(stream)
 
-                #s3_bucket_name = parser.get('s3', 'bucket_name')
+                s3_bucket_name = parser.get('s3', 'bucket_name')
 
                 for image_file_name in captured_image_file_names:
                     print '===image file in array: ' + image_file_name
 
                     # upload image to s3
-                    #fileservice.uploadFile(s3_bucket_name, filePath + '/' + image_file_name, image_file_name, 'image/jpeg')
+                    fileservice.uploadFile(s3_bucket_name, images_file_path + '/' + image_file_name, image_file_name, 'image/jpeg')
 
-                    #print 'Image uploaded to s3...'
+                    print 'Image uploaded to s3...'
 #
                 # send mms # todo send list
                 #messageservice.sendMessage('Motion detected!', 'http://s3.amazonaws.com/' + s3_bucket_name + '/' + fileName)
 
                 #print 'Twilio message sent...'
 
-                print 'Recording motion - COMPLETED'
+
     finally:
         camera.stop_recording()
