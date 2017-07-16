@@ -20,7 +20,6 @@ captured_image_file_names = []
 rect_coords = None
 
 def detect_motion(camera):
-    global images_file_path
     global prior_image
     global captured_image
     global captured_image_file_names
@@ -82,7 +81,6 @@ def write_video(stream, video_guid):
 
     stream.seek(0)
     stream.truncate()
-
 
 with picamera.PiCamera() as camera:
     print 'Started pi-cam'
