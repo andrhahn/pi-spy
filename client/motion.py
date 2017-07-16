@@ -15,6 +15,7 @@ images_path = configservice.get_config("images_path")
 videos_path = configservice.get_config("videos_path")
 logs_path = configservice.get_config("logs_path")
 
+print 'sdfsdfsdfsdfsdf'
 if not os.path.exists(os.path.dirname(images_path)):
     os.makedirs(os.path.dirname(images_path))
     print 'creating dir'
