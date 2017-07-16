@@ -10,13 +10,14 @@ from PIL import ImageChops
 from PIL import ImageDraw
 from PIL import ImageOps
 
-import configservice
-import fileservice
-import messageservice
+import config_service
+import s3_service
+import twilio_service
+import vimeo_service
 
-images_path = configservice.get_config("images_path")
-videos_path = configservice.get_config("videos_path")
-logs_path = configservice.get_config("logs_path")
+images_path = config_service.get_config("images_path")
+videos_path = config_service.get_config("videos_path")
+logs_path = config_service.get_config("logs_path")
 
 prior_image = None
 captured_image = None
@@ -40,10 +41,10 @@ def save_image(file_name):
 
     print 'Saved image: ' + images_path + '/' + file_name
 
-def process_images(captured_image_file_names):
+def process_images(captured_image_file_names, video_guid):
     s3_host_name = 'http://s3.amazonaws.com'
 
-    s3_bucket_name = configservice.get_config('s3_bucket_name')
+    s3_bucket_name = config_service.get_config('s3_bucket_name')
 
     media_urls = []
 
@@ -51,7 +52,7 @@ def process_images(captured_image_file_names):
         # upload image to s3
         key = 'images/' + image_file_name
 
-        fileservice.uploadFile(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
+        s3_service.upload_file(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
 
         media_url = s3_host_name + '/' + s3_bucket_name + '/' + key
 
@@ -60,7 +61,10 @@ def process_images(captured_image_file_names):
         media_urls.append(media_url)
 
     # send mms
-    messageservice.sendMessage('Motion detected!', media_urls)
+    twilio_service.send_message('Motion detected!', media_urls)
+
+    # upload video to twilio # todo: concat and upload before.h264
+    vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
 
     print 'Twilio message sent...'
 
@@ -169,7 +173,7 @@ with picamera.PiCamera() as camera:
                 camera.split_recording(stream)
 
                 # process images in a thread
-                process_images_thread = threading.Thread(target=process_images, args=(list(captured_image_file_names),))
+                process_images_thread = threading.Thread(target=process_images, args=(list(captured_image_file_names),video_guid,))
 
                 process_images_thread.start()
     finally:
