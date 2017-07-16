@@ -1,22 +1,19 @@
 #!/usr/bin/python
 
 from twilio.rest import TwilioRestClient
-import ConfigParser
-
-parser = ConfigParser.SafeConfigParser()
-parser.read('../app_config')
+import configservice
 
 def sendMessage(body, media_url):
-    accountSid = parser.get('twilio', 'account_sid')
-    authToken = parser.get('twilio', 'auth_token')
-    fromNumber = parser.get('twilio', 'from_number')
-    toNumber = parser.get('twilio', 'to_number')
+    account_sid = configservice.get_config('twilio_account_sid')
+    auth_token = configservice.get_config('twilio_auth_token')
+    from_number = configservice.get_config('twilio_from_number')
+    to_number = configservice.get_config('twilio_to_number')
 
-    client = TwilioRestClient(accountSid, authToken)
+    client = TwilioRestClient(account_sid, auth_token)
 
     client.messages.create(
         body=body,
-        from_=fromNumber,
-        to=toNumber,
+        from_=from_number,
+        to=to_number,
         media_url=media_url
     )
