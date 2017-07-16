@@ -15,28 +15,22 @@ images_path = configservice.get_config("images_path")
 videos_path = configservice.get_config("videos_path")
 logs_path = configservice.get_config("logs_path")
 
-try:
-    os.makedirs(images_path)
-except OSError:
-    if not os.path.isdir(images_path):
-        raise
-
-try:
-    os.makedirs(videos_path)
-except OSError:
-    if not os.path.isdir(videos_path):
-        raise
-
-try:
-    os.makedirs(logs_path)
-except OSError:
-    if not os.path.isdir(logs_path):
-        raise
-
 prior_image = None
 captured_image = None
 captured_image_file_names = []
 rect_coords = None
+
+def create_dirs():
+    create_dir(images_path)
+    create_dir(videos_path)
+    create_dir(logs_path)
+
+def create_dir(path):
+    try:
+        os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
 
 def detect_motion(camera):
     global prior_image
@@ -102,6 +96,8 @@ def write_video(stream, video_guid):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
+    create_dirs()
+
     print 'Started pi-cam'
 
     camera.resolution = (1280, 720)
