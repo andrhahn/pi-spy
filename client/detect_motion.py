@@ -8,6 +8,7 @@ from PIL import ImageDraw
 from PIL import ImageOps
 
 import fileservice
+import messageservice
 
 parser = ConfigParser.SafeConfigParser()
 parser.read('../app_config')
@@ -17,7 +18,6 @@ prior_image = None
 captured_image = None
 captured_image_file_names = []
 rect_coords = None
-
 
 def detect_motion(camera):
     global images_file_path
@@ -143,9 +143,9 @@ with picamera.PiCamera() as camera:
                     print 'media url: ' + mu
 
                 # send mms
-                # messageservice.sendMessage('Motion detected!', media_urls)
+                messageservice.sendMessage('Motion detected!', media_urls)
 
-                # print 'Twilio message sent...'
+                print 'Twilio message sent...'
 
                 camera.wait_recording(3)
     finally:
