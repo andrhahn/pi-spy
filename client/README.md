@@ -2,11 +2,11 @@
 
 ###### The client code runs on the rpi camera and consists of two processes:
     1) motion.py - detects motion
-    2) schedule.py - regularly polls to detect any new files
+    2) scheduler.py - regularly polls to detect any new files
 
-The motion.py process is focused on detecting motion.  It is separated out from the schedule.py process so it does not get bogged down uploading files and sending notifications.  We want motion detection to be as lean and fast as possible.
+The motion.py process is focused on detecting motion.  It is separated out from the scheduler.py process so it does not get bogged down uploading files and sending notifications.  We want motion detection to be as lean and fast as possible.
  
-The schedule.py process is focused on polling for any newly captured motion detection images, and then uploading those images and sending out a notification.
+The scheduler.py process is focused on polling for any newly captured motion detection images, and then uploading those images and sending out a notification.
 
 ##### Setup
     sudo apt update
@@ -30,7 +30,7 @@ The schedule.py process is focused on polling for any newly captured motion dete
 ##### Run
     python motion.py
     
-    python schedule.py
+    python scheduler.py
     
 ### License
 
