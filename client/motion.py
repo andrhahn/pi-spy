@@ -2,6 +2,7 @@
 
 import os
 import io
+import threading
 import picamera
 import uuid
 from PIL import Image
@@ -33,6 +34,30 @@ def create_dir(path):
     except OSError:
         if not os.path.isdir(path):
             raise
+
+def process_images(captured_image_file_names):
+    s3_host_name = 'http://s3.amazonaws.com'
+
+    s3_bucket_name = configservice.get_config('s3_bucket_name')
+
+    media_urls = []
+
+    for image_file_name in captured_image_file_names:
+        # upload image to s3
+        key = 'images/' + image_file_name
+
+        fileservice.uploadFile(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
+
+        media_url = s3_host_name + '/' + s3_bucket_name + '/' + key
+
+        print 'Uploaded image to s3: ' + media_url
+
+        media_urls.append(media_url)
+
+    # send mms
+    messageservice.sendMessage('Motion detected!', media_urls)
+
+    print 'Twilio message sent...'
 
 def detect_motion(camera):
     global prior_image
@@ -138,29 +163,9 @@ with picamera.PiCamera() as camera:
                 # once motion is no longer detected, split recording back to the in-memory circular buffer
                 camera.split_recording(stream)
 
-                media_urls = []
+                # process images in a thread
+                job_thread = threading.Thread(target=process_images, args=(list(captured_image_file_names),))
 
-                s3_host_name = 'http://s3.amazonaws.com'
-
-                s3_bucket_name = configservice.get_config('s3_bucket_name')
-
-                for image_file_name in captured_image_file_names:
-                    # upload image to s3
-                    key = 'images/' + image_file_name
-
-                    fileservice.uploadFile(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
-
-                    media_url = s3_host_name + '/' + s3_bucket_name + '/' + key
-
-                    print 'Uploaded image to s3: ' + media_url
-
-                    media_urls.append(media_url)
-
-                # send mms
-                messageservice.sendMessage('Motion detected!', media_urls)
-
-                print 'Twilio message sent...'
-
-                camera.wait_recording(3)
+                job_thread.start()
     finally:
         camera.stop_recording()
