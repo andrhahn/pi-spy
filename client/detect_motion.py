@@ -14,15 +14,17 @@ import fileservice
 parser = ConfigParser.SafeConfigParser()
 parser.read('../app_config')
 
+images_file_path = '/home/pi/pi-spy-files/images'
 prior_image = None
 captured_image = None
-captured_images = []
+captured_image_file_names = []
 rect_coords = None
 
 def detect_motion(camera):
+    global images_file_path
     global prior_image
     global captured_image
-    global captured_images
+    global captured_image_file_names
     global rect_coords
 
     stream = io.BytesIO()
@@ -45,7 +47,18 @@ def detect_motion(camera):
         if rect_coords != None:
             captured_image = current_image.copy()
 
-            captured_images.append(captured_image)
+            # draw box around the image
+            ImageDraw.Draw(captured_image).rectangle(rect_coords, outline="yellow", fill=None)
+
+            file_name = capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
+
+            # save file to file system
+            captured_image.save(images_file_path + '/' + file_name)
+
+            print 'saved image to images folder'
+
+            if len(captured_image_file_names) < 5:
+                captured_image_file_names.append(file_name)
 
             prior_image = current_image
 
@@ -86,7 +99,7 @@ with picamera.PiCamera() as camera:
             if detect_motion(camera):
                 print 'Recording motion - STARTED'
 
-                captured_images = []
+                captured_image_file_names = []
 
                 capture_time = dt.datetime.now()
 
@@ -96,23 +109,6 @@ with picamera.PiCamera() as camera:
                 # write the 10 seconds "before" motion to disk as well
                 write_video(stream, capture_time)
 
-                # draw box around the image
-                ImageDraw.Draw(captured_image).rectangle(rect_coords, outline="yellow", fill=None)
-
-                fileName = capture_time.strftime('%Y-%m-%dT%H.%M.%S') + '.jpg'
-
-                filePath = '/home/pi/pi-spy-files/images'
-
-                # save file to filesystem
-                captured_image.save(filePath + '/' + fileName)
-
-                print 'saved image to images folder'
-
-                # add image to captured_images list
-                #if len(captured_images) < 5:
-                    #captured_images.append(fileName)
-                #captured_images.append(fileName)
-
                 # record video as long as there is motion being detected
                 while detect_motion(camera):
                     camera.wait_recording(1)
@@ -120,9 +116,9 @@ with picamera.PiCamera() as camera:
                 # once motion is no longer detected, split recording back to the in-memory circular buffer
                 camera.split_recording(stream)
 
-                s3_bucket_name = parser.get('s3', 'bucket_name')
+                #s3_bucket_name = parser.get('s3', 'bucket_name')
 
-                for image_file_name in captured_images:
+                for image_file_name in captured_image_file_names:
                     print '===image file in array:' + image_file_name
 
                     # upload image to s3
