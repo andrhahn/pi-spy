@@ -146,9 +146,11 @@ with picamera.PiCamera() as camera:
 
                 for image_file_name in captured_image_file_names:
                     # upload image to s3
-                    fileservice.uploadFile(s3_bucket_name, images_path + '/' + image_file_name, 'images/' + image_file_name, 'image/jpeg')
+                    key = 'images/' + image_file_name
 
-                    media_url = s3_host_name + '/' + s3_bucket_name + '/' + image_file_name
+                    fileservice.uploadFile(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
+
+                    media_url = s3_host_name + '/' + s3_bucket_name + '/' + key
 
                     print 'Uploaded image to s3: ' + media_url
 
