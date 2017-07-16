@@ -35,6 +35,11 @@ def create_dir(path):
         if not os.path.isdir(path):
             raise
 
+def save_image(file_name):
+    captured_image.save(images_path + '/' + file_name)
+
+    print 'Saved image: ' + images_path + '/' + file_name
+
 def process_images(captured_image_file_names):
     s3_host_name = 'http://s3.amazonaws.com'
 
@@ -93,9 +98,9 @@ def detect_motion(camera):
             captured_image_file_name = image_guid + '.jpg'
 
             # save file to file system
-            captured_image.save(images_path + '/' + captured_image_file_name)
+            save_image_thread = threading.Thread(target=save_image, args=(captured_image_file_name,))
 
-            print 'Saved image: ' + images_path + '/' + captured_image_file_name
+            save_image_thread.start()
 
             if len(captured_image_file_names) < 5:
                 captured_image_file_names.append(captured_image_file_name)
@@ -164,8 +169,8 @@ with picamera.PiCamera() as camera:
                 camera.split_recording(stream)
 
                 # process images in a thread
-                job_thread = threading.Thread(target=process_images, args=(list(captured_image_file_names),))
+                process_images_thread = threading.Thread(target=process_images, args=(list(captured_image_file_names),))
 
-                job_thread.start()
+                process_images_thread.start()
     finally:
         camera.stop_recording()
