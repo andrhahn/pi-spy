@@ -56,12 +56,17 @@ def process_images(captured_image_file_names, video_guid):
 
         media_urls.append(media_url)
 
-    # todo: concat and upload before.h264
-    # upload video to vimeo
-    video_uri = vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
+    # upload videos to vimeo
+    before_video_uri = vimeo_service.upload_file(videos_path + '/before_' + video_guid + '.h264')
+    after_video_uri = vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
 
     # send mms
-    twilio_service.send_message('Motion detected!\n' + 'https://player.vimeo.com/video/' + video_uri.split('/')[2], media_urls)
+    twilio_service.send_message(
+        'Motion detected!\n' +
+        'Before: https://player.vimeo.com/video/' + before_video_uri.split('/')[2] + '\n' +
+        'After: https://player.vimeo.com/video/' + after_video_uri.split('/')[2],
+        media_urls
+    )
 
 def detect_motion(camera):
     global prior_image
@@ -135,39 +140,42 @@ with picamera.PiCamera() as camera:
     camera.vflip = True
     camera.hflip = True
 
+    # creates a "before" stream which only holds 10 total seconds of data
     stream = picamera.PiCameraCircularIO(camera, seconds=10)
 
+    # start recording to "before" stream
     camera.start_recording(stream, format='h264')
 
     try:
         while True:
-            print 'Polling for motion'
+            print 'Polling for motion...'
 
             camera.wait_recording(1)
 
             if detect_motion(camera):
-                print 'Recording motion - started'
+                print 'Recording motion - start'
 
                 captured_image_file_names = []
 
                 video_guid = str(uuid.uuid4())
 
-                # if motion is detected, split the recording to record the frames "after" motion
+                # once motion is detected, start recording "after" video data directly to disk
+                # this recording of "after" video will continue to record to disk until motion is no longer detected
                 camera.split_recording(videos_path + '/after_' + video_guid + '.h264')
 
-                # write the 10 seconds "before" motion to disk as well
+                # write "before" stream data (the last 10 seconds) to disk
                 write_video(stream, video_guid)
 
-                # record video as long as there is motion being detected
+                # keep recording to "after" stream until motion stops
                 while detect_motion(camera):
                     camera.wait_recording(1)
 
-                print 'Recording motion - completed'
+                print 'Recording motion - complete'
 
-                # once motion is no longer detected, split recording back to the in-memory circular buffer
+                # once motion is done, start recording to "before" stream again
                 camera.split_recording(stream)
 
-                # process images in a thread
+                # process images in a separate thread
                 process_images_thread = threading.Thread(target=process_images, args=(list(captured_image_file_names),video_guid,))
 
                 process_images_thread.start()
