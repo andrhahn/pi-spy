@@ -58,7 +58,7 @@ def detect_motion(camera):
             # save file to file system
             captured_image.save(images_file_path + '/' + captured_image_file_name)
 
-            print 'saved image to images folder'
+            print 'Saved image: ' + images_file_path + '/' + captured_image_file_name
 
             if len(captured_image_file_names) < 5:
                 captured_image_file_names.append(captured_image_file_name)
@@ -85,6 +85,8 @@ def write_video(stream, video_guid):
     stream.truncate()
 
 with picamera.PiCamera() as camera:
+    print 'Started pi-cam'
+
     camera.resolution = (1280, 720)
     camera.vflip = True
     camera.hflip = True
@@ -95,12 +97,12 @@ with picamera.PiCamera() as camera:
 
     try:
         while True:
-            print 'Started motion detection...'
+            print 'Polling for motion'
 
             camera.wait_recording(1)
 
             if detect_motion(camera):
-                print 'Recording motion - STARTED'
+                print 'Recording motion - started'
 
                 captured_image_file_names = []
 
@@ -116,7 +118,7 @@ with picamera.PiCamera() as camera:
                 while detect_motion(camera):
                     camera.wait_recording(1)
 
-                print 'Recording motion - COMPLETED'
+                print 'Recording motion - completed'
 
                 # once motion is no longer detected, split recording back to the in-memory circular buffer
                 camera.split_recording(stream)
