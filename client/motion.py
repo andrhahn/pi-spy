@@ -61,26 +61,27 @@ def process_recording(captured_image_file_names, video_guid):
     captured_before_video_key = 'videos/' + captured_video_before_file_name
     captured_after_video_key = 'videos/' + captured_video_after_file_name
 
-    s3_service.upload_file(s3_bucket_name, videos_path + '/' + captured_video_before_file_name, captured_before_video_key, 'video/h264')
-    s3_service.upload_file(s3_bucket_name, videos_path + '/' + captured_video_after_file_name, captured_after_video_key, 'video/h264')
+    s3_service.upload_file(s3_bucket_name, open(videos_path + '/' + captured_video_before_file_name, 'rb'), captured_before_video_key, 'video/h264')
+    s3_service.upload_file(s3_bucket_name, open(videos_path + '/' + captured_video_after_file_name, 'rb'), captured_after_video_key, 'video/h264')
 
     captured_video_before_url = s3_host_name + '/' + s3_bucket_name + '/' + captured_before_video_key
     captured_video_after_url = s3_host_name + '/' + s3_bucket_name + '/' + captured_after_video_key
 
     # send ses email
-    body = 'Motion detected<br><br>'
-    body += 'Screenshots:<br>'
+    body = 'Screenshots:<br>'
 
     for captured_image_url in captured_image_urls:
         body += '<img src="' + captured_image_url + '"/><br>'
 
     body += '<br>'
-    body += 'Before video (h264): ' + '<a href="' + captured_video_before_url + '">' + captured_video_before_file_name + '</a><br>'
-    body += 'After video (h264): ' + '<a href="' + captured_video_after_url + '">' + captured_video_after_file_name + '</a><br>'
+    body += '<a href="' + captured_video_before_url + '">' + captured_video_before_url + '</a><br><br>'
+    body += '<a href="' + captured_video_after_url + '">' + captured_video_after_url + '</a><br><br><br>'
+
+    body += '<a href="https://github.com/andrhahn/pi-spy">Captured with pi-spy</a><br>'
 
     to_emails = ['andrhahn@hotmail.com']
 
-    # s3_service.send_email('pispy motion detected', body, to_emails)
+    s3_service.send_email('pispy motion detected', body, to_emails)
 
     print 'Image and Video processing complete.'
 
