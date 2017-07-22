@@ -6,7 +6,9 @@ import boto3
 def upload_file(bucketName, filePath, key, contentType):
     client = boto3.client('s3')
 
-    client.put_object(Body=filePath, Bucket=bucketName, Key=key, ContentType=contentType, ACL='public-read')
+    response = client.put_object(Body=filePath, Bucket=bucketName, Key=key, ContentType=contentType, ACL='public-read')
+
+    print '==s3 put_object resp: ' + json.dumps(response)
 
 def send_email(subject, body, to_emails, from_email):
     client = boto3.client('ses')
@@ -32,4 +34,4 @@ def send_email(subject, body, to_emails, from_email):
         }
     )
 
-    print '==ses respnse: ' + json.dumps(response)
+    print '==ses send_email resp: ' + json.dumps(response)
