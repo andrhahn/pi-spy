@@ -63,7 +63,7 @@ def process_images(captured_image_file_names, video_guid):
 
     # send ses email
     # body = 'This message body contains HTML formatting. It can, contain links like this: <a class="ulink" href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide" target="_blank">Amazon SES Developer Guide</a>.',
-    body = 'This message body',
+    body = 'This message body contains HTML forhttp://docs.aws.amazon.com/ses/latest/DeveloperGuide" target="_blank">Amazon SES Developer Guide</a>.'
 
     to_emails = ['andrhahn@hotmail.com']
 
