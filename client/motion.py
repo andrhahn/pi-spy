@@ -62,7 +62,8 @@ def process_images(captured_image_file_names, video_guid):
     s3_service.upload_file(s3_bucket_name, videos_path + '/' + after_file_name, 'videos/' + after_file_name, 'video/h264')
 
     # send ses email
-    body ='This message body contains HTML formatting. It can, contain links like this: <a class="ulink" href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide" target="_blank">Amazon SES Developer Guide</a>.',
+    # body = 'This message body contains HTML formatting. It can, contain links like this: <a class="ulink" href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide" target="_blank">Amazon SES Developer Guide</a>.',
+    body = 'This message body',
 
     to_emails = ['andrhahn@hotmail.com']
 
