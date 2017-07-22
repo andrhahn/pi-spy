@@ -10,7 +10,7 @@ def upload_file(bucketName, filePath, key, contentType):
 def send_email(subject, body, to_emails, from_email):
     client = boto3.client('ses')
 
-    return client.send_email(
+    response = client.send_email(
         Source=from_email,
         Destination={
             'BccAddresses': [],
@@ -30,3 +30,5 @@ def send_email(subject, body, to_emails, from_email):
             }
         }
     )
+
+    print '==ses respnse: ' + response
