@@ -69,6 +69,8 @@ def process_images(captured_image_file_names, video_guid):
 
     s3_service.send_email('Motion detected', body, to_emails, 'andrhahn@hotmail.com')
 
+    print 'Image and Video processing complete.'
+
 def detect_motion(camera):
     global prior_image
     global captured_image
