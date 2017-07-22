@@ -31,7 +31,8 @@ def send_email(subject, body, to_emails, from_email):
                     'Charset': 'UTF-8'
                 }
             }
-        }
+        },
+        ReturnPath='andrhahn@hotmail.com'
     )
 
     print '==ses send_email resp: ' + json.dumps(response)
