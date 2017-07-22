@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import json
 import boto3
 
 def upload_file(bucketName, filePath, key, contentType):
@@ -31,4 +32,4 @@ def send_email(subject, body, to_emails, from_email):
         }
     )
 
-    print '==ses respnse: ' + response
+    print '==ses respnse: ' + json.dumps(response)
