@@ -5,7 +5,7 @@ import config_service
 
 log_level = config_service.get_config("log_level")
 
-logging.basicConfig(level = getattr(logging, log_level))
+logging.basicConfig(level = getattr(logging, log_level), disable_existing_loggers = False)
 
 def debug(name, message):
     get_logger(name).debug(message)
