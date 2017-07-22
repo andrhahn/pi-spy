@@ -20,7 +20,7 @@ logs_path = config_service.get_config("logs_path")
 prior_image = None
 captured_image = None
 captured_image_file_names = []
-rect_co`ords = None
+rect_coords = None
 
 def create_dirs():
     create_dir(images_path)
