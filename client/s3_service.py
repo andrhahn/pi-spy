@@ -13,7 +13,7 @@ def upload_file(bucket, body, key, content_type):
 
     response = client.put_object(Body=body, Bucket=bucket, Key=key, ContentType=content_type, ACL='public-read')
 
-    logging.debug(__name__, '3 put_object resp: ' + json.dumps(response))
+    logging.debug('3 put_object resp: ' + json.dumps(response))
 
 def send_email(subject, body, to_emails):
     client = boto3.client('ses')
@@ -40,4 +40,4 @@ def send_email(subject, body, to_emails):
         ReturnPath='info@scranthdaddy.com'
     )
 
-    logging.debug(__name__, 'ses send_email resp: ' + json.dumps(response))
+    logging.debug('ses send_email resp: ' + json.dumps(response))

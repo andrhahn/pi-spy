@@ -87,9 +87,9 @@ def process_recording(captured_image_file_names, video_guid):
 
     s3_service.send_email('pispy motion detected', body, to_emails)
 
-    logging.info(__name__, 'Image and Video processing complete.')
+    logging.info('Image and Video processing complete.')
 
-    logging.debug(__name__, 'SHOULDNT SEE ME!!')
+    logging.debug('SHOULDNT SEE ME!!')
 
 def detect_motion(camera):
     global prior_image
