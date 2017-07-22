@@ -12,8 +12,6 @@ from PIL import ImageOps
 
 import config_service
 import s3_service
-import twilio_service
-import vimeo_service
 
 images_path = config_service.get_config("images_path")
 videos_path = config_service.get_config("videos_path")
@@ -56,17 +54,19 @@ def process_images(captured_image_file_names, video_guid):
 
         media_urls.append(media_url)
 
-    # upload videos to vimeo
-    before_video_uri = vimeo_service.upload_file(videos_path + '/before_' + video_guid + '.h264')
-    after_video_uri = vimeo_service.upload_file(videos_path + '/after_' + video_guid + '.h264')
+    # upload videos to s3
+    before_file_name = 'before_' + video_guid + '.h264'
+    after_file_name = 'after_' + video_guid + '.h264'
 
-    # send mms
-    twilio_service.send_message(
-        'Motion detected!\n' +
-        'Before: https://player.vimeo.com/video/' + before_video_uri.split('/')[2] + '\n' +
-        'After: https://player.vimeo.com/video/' + after_video_uri.split('/')[2],
-        media_urls
-    )
+    s3_service.upload_file(s3_bucket_name, videos_path + '/' + before_file_name, 'videos/' + before_file_name, 'video/h264')
+    s3_service.upload_file(s3_bucket_name, videos_path + '/' + after_file_name, 'videos/' + after_file_name, 'video/h264')
+
+    # send ses email
+    body ='This message body contains HTML formatting. It can, contain links like this: <a class="ulink" href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide" target="_blank">Amazon SES Developer Guide</a>.',
+
+    to_emails = ['andrhahn@hotmail.com']
+
+    s3_service.send_email('Motion detected', body, to_emails, 'andrhahn@hotmail.com')
 
 def detect_motion(camera):
     global prior_image

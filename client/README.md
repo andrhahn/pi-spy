@@ -17,8 +17,6 @@ The scheduler.py process is focused on polling for any newly captured motion det
     
     sudo pip install schedule
     
-    sudo pip install twilio
-        
     sudo pip install boto3
     
     mkdir -p /home/pi/pi-spy-files/logs

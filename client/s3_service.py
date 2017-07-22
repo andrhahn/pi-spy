@@ -3,8 +3,36 @@
 import boto3
 
 def upload_file(bucketName, filePath, key, contentType):
-    s3 = boto3.resource('s3')
+    client = boto3.client('s3')
 
-    bucket = s3.Bucket(bucketName)
+    client.put_object(Body=filePath, Bucket=bucketName, Key=key, ContentType=contentType, ACL='public-read')
 
-    bucket.upload_file(filePath, key, ExtraArgs={'ACL': 'public-read', 'ContentType': contentType})
+def send_email(subject, body, to_emails, from_email):
+    client = boto3.client('ses')
+
+    return client.send_email(
+        Source=from_email,
+        Destination={
+            'BccAddresses': [],
+            'CcAddresses': [],
+            'ToAddresses': to_emails
+        },
+        Message={
+            'Subject': {
+                'Data': subject,
+                'Charset': 'UTF-8'
+            },
+            'Body': {
+                'Html': {
+                    'Data': body,
+                    'Charset': 'UTF-8'
+                }
+            }
+        },
+        ReplyToAddresses=[],
+        ReturnPath='',
+        SourceArn='',
+        ReturnPathArn='',
+        Tags=[],
+        ConfigurationSetName=''
+    )

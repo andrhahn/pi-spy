@@ -4,12 +4,3 @@ videos_path =
 logs_path =
 
 s3_bucket_name =
-
-twilio_account_sid =
-twilio_auth_token =
-twilio_from_number =
-twilio_to_number =
-
-vimeo_token =
-vimeo_key =
-vimeo_secret =
