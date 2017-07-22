@@ -12,6 +12,7 @@ from PIL import ImageOps
 
 import config_service
 import s3_service
+import log_service
 
 images_path = config_service.get_config("images_path")
 videos_path = config_service.get_config("videos_path")
@@ -83,7 +84,9 @@ def process_recording(captured_image_file_names, video_guid):
 
     s3_service.send_email('pispy motion detected', body, to_emails)
 
-    print 'Image and Video processing complete.'
+    log_service.info(__name__, 'Image and Video processing complete.')
+
+    log_service.debug(__name__, 'SHOULDNT SEE ME!!')
 
 def detect_motion(camera):
     global prior_image

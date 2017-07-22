@@ -3,10 +3,10 @@
 import json
 import boto3
 
-def upload_file(bucketName, body, key, contentType):
+def upload_file(bucket, body, key, content_type):
     client = boto3.client('s3')
 
-    response = client.put_object(Body=body, Bucket=bucketName, Key=key, ContentType=contentType, ACL='public-read')
+    response = client.put_object(Body=body, Bucket=bucket, Key=key, ContentType=content_type, ACL='public-read')
 
     print '==s3 put_object resp: ' + json.dumps(response)
 

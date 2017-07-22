@@ -1,4 +1,6 @@
 [default]
+log_level =
+
 images_path =
 videos_path =
 logs_path =
