@@ -10,11 +10,11 @@ def upload_file(bucketName, filePath, key, contentType):
 
     print '==s3 put_object resp: ' + json.dumps(response)
 
-def send_email(subject, body, to_emails, from_email):
+def send_email(subject, body, to_emails):
     client = boto3.client('ses')
 
     response = client.send_email(
-        Source=from_email,
+        Source='info@scranthdaddy.com',
         Destination={
             'BccAddresses': [],
             'CcAddresses': [],
@@ -32,7 +32,7 @@ def send_email(subject, body, to_emails, from_email):
                 }
             }
         },
-        ReturnPath='andrhahn@hotmail.com'
+        ReturnPath='info@scranthdaddy.com'
     )
 
     print '==ses send_email resp: ' + json.dumps(response)

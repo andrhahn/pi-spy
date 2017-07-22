@@ -80,7 +80,7 @@ def process_images(captured_image_file_names, video_guid):
 
     to_emails = ['andrhahn@hotmail.com']
 
-    s3_service.send_email('pispy motion detected', body, to_emails, 'andrhahn@hotmail.com')
+    s3_service.send_email('pispy motion detected', body, to_emails)
 
     print 'Image and Video processing complete.'
 
