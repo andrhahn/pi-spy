@@ -28,11 +28,5 @@ def send_email(subject, body, to_emails, from_email):
                     'Charset': 'UTF-8'
                 }
             }
-        },
-        ReplyToAddresses=[],
-        ReturnPath='',
-        SourceArn='',
-        ReturnPathArn='',
-        Tags=[],
-        ConfigurationSetName=''
+        }
     )
