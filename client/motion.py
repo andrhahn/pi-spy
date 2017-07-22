@@ -20,7 +20,7 @@ logs_path = config_service.get_config("logs_path")
 prior_image = None
 captured_image = None
 captured_image_file_names = []
-rect_coords = None
+rect_co`ords = None
 
 def create_dirs():
     create_dir(images_path)
@@ -37,18 +37,18 @@ def create_dir(path):
 def save_image(file_name):
     captured_image.save(images_path + '/' + file_name)
 
-def process_images(captured_image_file_names, video_guid):
+def process_recording(captured_image_file_names, video_guid):
     s3_host_name = 'http://s3.amazonaws.com'
 
     s3_bucket_name = config_service.get_config('s3_bucket_name')
 
     captured_image_urls = []
 
-    for image_file_name in captured_image_file_names:
-        key = 'images/' + image_file_name
+    for captured_image_file_name in captured_image_file_names:
+        key = 'images/' + captured_image_file_name
 
         # upload image to s3
-        s3_service.upload_file(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
+        s3_service.upload_file(s3_bucket_name, open(images_path + '/' + captured_image_file_name, 'rb'), key, 'image/jpeg')
 
         captured_image_url = s3_host_name + '/' + s3_bucket_name + '/' + key
 
@@ -80,7 +80,7 @@ def process_images(captured_image_file_names, video_guid):
 
     to_emails = ['andrhahn@hotmail.com']
 
-    s3_service.send_email('pispy motion detected', body, to_emails)
+    # s3_service.send_email('pispy motion detected', body, to_emails)
 
     print 'Image and Video processing complete.'
 
@@ -192,7 +192,7 @@ with picamera.PiCamera() as camera:
                 camera.split_recording(stream)
 
                 # process images in a separate thread
-                process_images_thread = threading.Thread(target=process_images, args=(list(captured_image_file_names),video_guid,))
+                process_images_thread = threading.Thread(target=process_recording, args=(list(captured_image_file_names), video_guid,))
 
                 process_images_thread.start()
     finally:
