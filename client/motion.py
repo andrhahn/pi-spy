@@ -42,7 +42,7 @@ def process_images(captured_image_file_names, video_guid):
 
     s3_bucket_name = config_service.get_config('s3_bucket_name')
 
-    media_urls = []
+    captured_image_urls = []
 
     for image_file_name in captured_image_file_names:
         key = 'images/' + image_file_name
@@ -50,24 +50,37 @@ def process_images(captured_image_file_names, video_guid):
         # upload image to s3
         s3_service.upload_file(s3_bucket_name, images_path + '/' + image_file_name, key, 'image/jpeg')
 
-        media_url = s3_host_name + '/' + s3_bucket_name + '/' + key
+        captured_image_url = s3_host_name + '/' + s3_bucket_name + '/' + key
 
-        media_urls.append(media_url)
+        captured_image_urls.append(captured_image_url)
 
     # upload videos to s3
-    before_file_name = 'before_' + video_guid + '.h264'
-    after_file_name = 'after_' + video_guid + '.h264'
+    captured_video_before_file_name = 'before_' + video_guid + '.h264'
+    captured_video_after_file_name = 'after_' + video_guid + '.h264'
 
-    s3_service.upload_file(s3_bucket_name, videos_path + '/' + before_file_name, 'videos/' + before_file_name, 'video/h264')
-    s3_service.upload_file(s3_bucket_name, videos_path + '/' + after_file_name, 'videos/' + after_file_name, 'video/h264')
+    captured_before_video_key = 'videos/' + captured_video_before_file_name
+    captured_after_video_key = 'videos/' + captured_video_after_file_name
+
+    s3_service.upload_file(s3_bucket_name, videos_path + '/' + captured_video_before_file_name, captured_before_video_key, 'video/h264')
+    s3_service.upload_file(s3_bucket_name, videos_path + '/' + captured_video_after_file_name, captured_after_video_key, 'video/h264')
+
+    captured_video_before_url = s3_host_name + '/' + s3_bucket_name + '/' + captured_before_video_key
+    captured_video_after_url = s3_host_name + '/' + s3_bucket_name + '/' + captured_after_video_key
 
     # send ses email
-    # body = 'This message body contains HTML formatting. It can, contain links like this: <a class="ulink" href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide" target="_blank">Amazon SES Developer Guide</a>.',
-    body = 'This message body contains HTML forhttp://docs.aws.amazon.com/ses/latest/DeveloperGuide" target="_blank">Amazon SES Developer Guide</a>.'
+    body = 'Motion detected<br><br>'
+    body += 'Screenshots:<br>'
+
+    for captured_image_url in captured_image_urls:
+        body += '<img src="' + captured_image_url + '"/><br>'
+
+    body += '<br>'
+    body += 'Before video (h264): ' + '<a href="' + captured_video_before_url + '">' + captured_video_before_file_name + '</a><br>'
+    body += 'After video (h264): ' + '<a href="' + captured_video_after_url + '">' + captured_video_after_file_name + '</a><br>'
 
     to_emails = ['andrhahn@hotmail.com']
 
-    s3_service.send_email('Motion detected', body, to_emails, 'andrhahn@hotmail.com')
+    s3_service.send_email('pispy motion detected', body, to_emails, 'andrhahn@hotmail.com')
 
     print 'Image and Video processing complete.'
 
