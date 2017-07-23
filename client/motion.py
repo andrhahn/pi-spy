@@ -3,6 +3,7 @@
 import os
 import io
 import threading
+import time
 import logging
 import picamera
 import uuid
@@ -202,5 +203,9 @@ with picamera.PiCamera() as camera:
                 process_images_thread = threading.Thread(target=process_recording, args=(list(captured_image_file_names), video_guid,))
 
                 process_images_thread.start()
+
+                print 'About to sleep camera for 10 seconds...'
+
+                camera.wait_recording(10)
     finally:
         camera.stop_recording()
