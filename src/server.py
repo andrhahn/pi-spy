@@ -3,7 +3,8 @@
 import io
 import picamera
 import logging
-import socketserver
+# import socketserver
+import SocketServer
 from threading import Condition
 # from http import server
 import SimpleHTTPServer
@@ -78,7 +79,7 @@ class StreamingHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.end_headers()
 
 # class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
-class StreamingServer(socketserver.ThreadingMixIn, SimpleHTTPServer):
+class StreamingServer(SocketServer.ThreadingMixIn, SimpleHTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
