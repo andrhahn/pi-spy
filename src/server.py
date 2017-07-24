@@ -36,7 +36,7 @@ class StreamingOutput(object):
             self.buffer.seek(0)
         return self.buffer.write(buf)
 
-class StreamingHandler(SimpleHTTPServer.BaseHTTPRequestHandler):
+class StreamingHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             self.send_response(301)
