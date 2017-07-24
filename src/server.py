@@ -75,7 +75,7 @@ class StreamingHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_error(404)
             self.end_headers()
 
-class StreamingServer(SocketServer.ThreadingMixIn, SimpleHTTPServer):
+class StreamingServer(SocketServer.ThreadingMixIn, SimpleHTTPServer.SimpleHTTPRequestHandler):
     allow_reuse_address = True
     daemon_threads = True
 
