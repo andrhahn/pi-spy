@@ -10,7 +10,7 @@ import SimpleHTTPServer
 PAGE="""\
 <html>
 <head>
-<title>pispy/title>
+<title>pispy</title>
 </head>
 <body>
 <h1>pispy - camera: ali</h1>
