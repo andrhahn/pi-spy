@@ -10,10 +10,10 @@ import SimpleHTTPServer
 PAGE="""\
 <html>
 <head>
-<title>picamera MJPEG streaming demo</title>
+<title>pispy/title>
 </head>
 <body>
-<h1>PiCamera MJPEG Streaming Demo</h1>
+<h1>pispy - camera: ali</h1>
 <img src="stream.mjpg" width="640" height="480" />
 </body>
 </html>
