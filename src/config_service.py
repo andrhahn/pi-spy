@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import ConfigParser
 
 parser = ConfigParser.SafeConfigParser()
