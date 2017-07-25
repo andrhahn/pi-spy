@@ -20,21 +20,16 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    pass
+    allow_reuse_address = True
+    daemon_threads = True
 
 
 server = ThreadedTCPServer(('', 8000), ThreadedTCPRequestHandler)
 
-server_thread = threading.Thread(target=server.serve_forever)
-
-server_thread.daemon = True
-
-server_thread.start()
-
-print 'Server started'
-
 try:
     server.serve_forever()
+
+    print 'Server started'
 except KeyboardInterrupt:
     print "Shutting down server..."
 

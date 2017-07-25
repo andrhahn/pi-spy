@@ -1,11 +1,12 @@
-import io
-import picamera
-import logging
-import SocketServer
-from threading import Condition
 import SimpleHTTPServer
+import SocketServer
+import io
+import logging
+from threading import Condition
 
-PAGE="""\
+import picamera
+
+PAGE = """\
 <html>
 <head>
 <title>pispy</title>
@@ -16,6 +17,7 @@ PAGE="""\
 </body>
 </html>
 """
+
 
 class StreamingOutput(object):
     def __init__(self):
@@ -33,6 +35,7 @@ class StreamingOutput(object):
                 self.condition.notify_all()
             self.buffer.seek(0)
         return self.buffer.write(buf)
+
 
 class StreamingHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -73,9 +76,11 @@ class StreamingHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_error(404)
             self.end_headers()
 
-class StreamingServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True
     daemon_threads = True
+
 
 with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
     camera.vflip = True
@@ -89,7 +94,7 @@ with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
         address = ('', 8000)
 
         print 'Starting streaming server...'
-        server = StreamingServer(address, StreamingHandler)
+        server = ThreadedTCPServer(address, StreamingHandler)
 
         print 'Starting serve_forever()...'
         server.serve_forever()
