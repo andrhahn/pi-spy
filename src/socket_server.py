@@ -24,16 +24,13 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     daemon_threads = True
 
 
-print 'About to create server'
-
 server = ThreadedTCPServer(('', 8000), ThreadedTCPRequestHandler)
 
-print 'Server created'
-
 try:
+    print 'Server started'
+
     server.serve_forever()
 
-    print 'Server started'
 except KeyboardInterrupt:
     print "Shutting down server..."
 
