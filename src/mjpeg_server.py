@@ -57,7 +57,6 @@ try:
 except KeyboardInterrupt:
     pass
 
-finally:
-    print 'Shutting down server...'
+print 'Shutting down server...'
 
-    server.server_close()
+server.server_close()
