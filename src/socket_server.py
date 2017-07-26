@@ -30,7 +30,6 @@ try:
     print 'Server started'
 
     server.serve_forever()
-
 except KeyboardInterrupt:
     print "Shutting down server..."
 
