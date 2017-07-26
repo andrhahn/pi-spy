@@ -16,9 +16,6 @@ class MyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=boundarydonotcross')
             self.end_headers()
 
-            # file1.close()
-            # file2.close()
-
             count = 1
 
             try:
@@ -31,7 +28,7 @@ class MyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                     f = open(file_name, 'rb')
 
-                    self.wfile.write('--boundarydonotcross\r\n')  # do i need the crlf?
+                    self.wfile.write('--boundarydonotcross')
 
                     self.send_header('Content-Type', 'image/jpeg')
                     self.send_header('Content-Length', os.path.getsize(file_name))
@@ -41,11 +38,6 @@ class MyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                     f.close()
 
-                    # self.wfile.write(b'\r\n')
-                    # self.wfile.write('\r\n')
-
-                    # Sleep for a bit..
-                    # time.sleep(0.07)
                     time.sleep(2)
 
                     count += 1
