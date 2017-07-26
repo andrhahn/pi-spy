@@ -13,7 +13,7 @@ class MyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
             self.send_header('Pragma', 'no-cache')
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=boundarydonotcross')
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
             self.end_headers()
 
             count = 1
@@ -28,7 +28,7 @@ class MyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                     f = open(file_name, 'rb')
 
-                    self.wfile.write('--boundarydonotcross')
+                    self.wfile.write('--frame')
 
                     self.send_header('Content-Type', 'image/jpeg')
                     self.send_header('Content-Length', os.path.getsize(file_name))
