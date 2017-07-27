@@ -1,12 +1,27 @@
 import BaseHTTPServer
+import SocketServer
 import logging
 import os
+import threading
 import time
 
 logging.basicConfig(level=logging.DEBUG)
 
 
-class MyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class SocketServerRequestHandler(SocketServer.BaseRequestHandler):
+    def handle(self):
+        data = self.request.recv(1024)
+        cur_thread = threading.current_thread()
+        response = "{}: {}".format(cur_thread.name, data)
+
+        print 'Connected with client', self.client_address
+
+        print 'Received message: ' + response
+
+        self.request.sendall('Hello govna')
+
+
+class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             self.send_response(200)
@@ -48,15 +63,33 @@ class MyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
 
 
-server = BaseHTTPServer.HTTPServer(('', 8000), MyRequestHandler)
+class SocketServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
+
+http_server = BaseHTTPServer.HTTPServer(('', 8000), HttpRequestHandler)
+
+socket_server = SocketServer(('', 8001), SocketServerRequestHandler)
 
 try:
-    print 'Server started'
+    print 'Starting socket server...'
 
-    server.serve_forever()
+    threading = threading.Thread(target=socket_server.serve_forever)
+    threading.daemon = True
+    threading.start()
+
+    print 'Starting http server'
+
+    http_server.serve_forever()
 except KeyboardInterrupt:
     pass
+finally:
+    print 'Shutting down socket server...'
 
-print 'Shutting down server...'
+    socket_server.shutdown()
+    socket_server.server_close()
 
-server.server_close()
+    print 'Shutting down http server...'
+
+    http_server.server_close()
