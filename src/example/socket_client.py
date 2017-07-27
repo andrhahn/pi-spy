@@ -3,19 +3,22 @@ import socket
 
 logging.basicConfig(level=logging.DEBUG)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-print 'Socket created'
+class SocketClient:
+    def __init__(self, host, port):
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s.connect((host, port))
 
-try:
-    s.connect(('localhost', 8000))
+        print 'Connected to socket server on port ', port
 
-    s.sendall('Hello gov')
+    def get_frame(self):
+        try:
+            while True:
+                return self.s.recv(1024)
+        finally:
+            self.close()
 
-    resp = s.recv(1024)
+    def close(self):
+        self.s.close()
 
-    print 'Received message from server: ' + resp
-finally:
-    s.close()
-
-    print 'Socket closed'
+        print 'Shutting down socket connection...'

@@ -1,10 +1,10 @@
-import os
 import io
-import threading
-import time
 import logging
-import picamera
+import os
+import threading
 import uuid
+
+import picamera
 from PIL import Image
 from PIL import ImageChops
 from PIL import ImageDraw
@@ -25,10 +25,12 @@ captured_image = None
 captured_image_file_names = []
 rect_coords = None
 
+
 def create_dirs():
     create_dir(images_path)
     create_dir(videos_path)
     create_dir(logs_path)
+
 
 def create_dir(path):
     try:
@@ -37,8 +39,10 @@ def create_dir(path):
         if not os.path.isdir(path):
             raise
 
+
 def save_image(file_name):
     captured_image.save(images_path + '/' + file_name)
+
 
 def process_recording(captured_image_file_names, video_guid):
     s3_host_name = 'http://s3.amazonaws.com'
@@ -51,7 +55,8 @@ def process_recording(captured_image_file_names, video_guid):
         key = 'images/' + captured_image_file_name
 
         # upload image to s3
-        s3_service.upload_file(s3_bucket_name, open(images_path + '/' + captured_image_file_name, 'rb'), key, 'image/jpeg')
+        s3_service.upload_file(s3_bucket_name, open(images_path + '/' + captured_image_file_name, 'rb'), key,
+                               'image/jpeg')
 
         captured_image_url = s3_host_name + '/' + s3_bucket_name + '/' + key
 
@@ -64,8 +69,10 @@ def process_recording(captured_image_file_names, video_guid):
     captured_before_video_key = 'videos/' + captured_video_before_file_name
     captured_after_video_key = 'videos/' + captured_video_after_file_name
 
-    s3_service.upload_file(s3_bucket_name, open(videos_path + '/' + captured_video_before_file_name, 'rb'), captured_before_video_key, 'video/h264')
-    s3_service.upload_file(s3_bucket_name, open(videos_path + '/' + captured_video_after_file_name, 'rb'), captured_after_video_key, 'video/h264')
+    s3_service.upload_file(s3_bucket_name, open(videos_path + '/' + captured_video_before_file_name, 'rb'),
+                           captured_before_video_key, 'video/h264')
+    s3_service.upload_file(s3_bucket_name, open(videos_path + '/' + captured_video_after_file_name, 'rb'),
+                           captured_after_video_key, 'video/h264')
 
     captured_video_before_url = s3_host_name + '/' + s3_bucket_name + '/' + captured_before_video_key
     captured_video_after_url = s3_host_name + '/' + s3_bucket_name + '/' + captured_after_video_key
@@ -89,6 +96,7 @@ def process_recording(captured_image_file_names, video_guid):
     logging.info('Image and Video processing complete.')
 
     logging.debug('SHOULDNT SEE ME!!')
+
 
 def detect_motion(camera):
     global prior_image
@@ -153,6 +161,7 @@ def write_video(stream, video_guid):
     stream.seek(0)
     stream.truncate()
 
+
 with picamera.PiCamera() as camera:
     create_dirs()
 
@@ -198,7 +207,8 @@ with picamera.PiCamera() as camera:
                 camera.split_recording(stream)
 
                 # process images in a separate thread
-                process_images_thread = threading.Thread(target=process_recording, args=(list(captured_image_file_names), video_guid,))
+                process_images_thread = threading.Thread(target=process_recording,
+                                                         args=(list(captured_image_file_names), video_guid,))
 
                 process_images_thread.start()
 

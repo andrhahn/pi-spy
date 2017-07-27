@@ -1,24 +1,18 @@
 import BaseHTTPServer
-import SocketServer
 import logging
 import os
-import threading
+import socket
 import time
+
+from PIL import Image
 
 logging.basicConfig(level=logging.DEBUG)
 
+SOCKET_SERVER_HOST = 'localhost'
+SOCKET_SERVER_PORT = 8001
 
-class SocketServerRequestHandler(SocketServer.BaseRequestHandler):
-    def handle(self):
-        data = self.request.recv(1024)
-        cur_thread = threading.current_thread()
-        response = "{}: {}".format(cur_thread.name, data)
-
-        print 'Connected with client', self.client_address
-
-        print 'Received message: ' + response
-
-        self.request.sendall('Hello govna')
+HTTP_SERVER_HOST = ''
+HTTP_SERVER_PORT = 8000
 
 
 class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -43,13 +37,30 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                     f = open(file_name, 'rb')
 
+                    image = Image.open(f)
+
+                    print 'Image size: ', image.size
+
+                    f.close()
+
+                    f = open(file_name, 'rb')
+
+                    data = f.read()
+
+                    buf = socket_connection.recv(1024)
+
+                    if buf.startswith(b'\xff\xd8'):
+                        print 'foo'
+                    else:
+                        print 'bar'
+
                     self.wfile.write('--frame')
 
                     self.send_header('Content-Type', 'image/jpeg')
                     self.send_header('Content-Length', os.path.getsize(file_name))
                     self.end_headers()
 
-                    self.wfile.write(f.read())
+                    self.wfile.write(data)
 
                     f.close()
 
@@ -63,33 +74,25 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
 
 
-class SocketServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    allow_reuse_address = True
-    daemon_threads = True
+socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-
-http_server = BaseHTTPServer.HTTPServer(('', 8000), HttpRequestHandler)
-
-socket_server = SocketServer(('', 8001), SocketServerRequestHandler)
+http_server = BaseHTTPServer.HTTPServer((HTTP_SERVER_HOST, HTTP_SERVER_PORT), HttpRequestHandler)
 
 try:
-    print 'Starting socket server...'
+    print 'Starting socket connection on port ', SOCKET_SERVER_PORT
 
-    socket_server_thread = threading.Thread(target=socket_server.serve_forever)
-    socket_server_thread.daemon = True
-    socket_server_thread.start()
+    socket_connection.connect((SOCKET_SERVER_HOST, SOCKET_SERVER_PORT))
 
-    print 'Starting http server'
+    print 'Starting http server on port ', HTTP_SERVER_PORT
 
     http_server.serve_forever()
 except KeyboardInterrupt:
     pass
-finally:
-    print 'Shutting down socket server...'
 
-    socket_server.shutdown()
-    socket_server.server_close()
+print 'Shutting down socket connection...'
 
-    print 'Shutting down http server...'
+socket_connection.close()
 
-    http_server.server_close()
+print 'Shutting down http server...'
+
+http_server.server_close()
