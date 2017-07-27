@@ -75,9 +75,9 @@ socket_server = SocketServer(('', 8001), SocketServerRequestHandler)
 try:
     print 'Starting socket server...'
 
-    threading = threading.Thread(target=socket_server.serve_forever)
-    threading.daemon = True
-    threading.start()
+    socket_server_thread = threading.Thread(target=socket_server.serve_forever)
+    socket_server_thread.daemon = True
+    socket_server_thread.start()
 
     print 'Starting http server'
 
