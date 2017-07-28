@@ -2,12 +2,11 @@ import BaseHTTPServer
 import SocketServer
 import io
 import logging
-import os
 import threading
 import time
-from abc import ABCMeta, abstractmethod
 
-from PIL import Image
+from observable import Observable
+from observer import Observer
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -18,50 +17,15 @@ HTTP_SERVER_HOST = ''
 HTTP_SERVER_PORT = 8000
 
 
-class Observable(object):
-    def __init__(self):
-        self.__observers = []
-
-    def register_observer(self, observer):
-        self.__observers.append(observer)
-
-    def unregister_observer(self, observer):
-        if observer in self.__observers:
-            self.__observers.remove(observer)
-
-    def notify_observers(self, *args, **kwargs):
-        for observer in self.__observers:
-            observer.notify(*args, **kwargs)
-
-
-class Observer(object):
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def notify(self, *args, **kwargs):
-        pass
-
-
 class FrameChangeObservable(Observable, object):
     pass
 
 
 class FrameChangeObserver(Observer):
-    # def __init__(self):
-    #     self.frame = []
-
     def notify(self, *args, **kwargs):
-        print 'received event:', args[0]
+        print 'Received new frame event:', args[0]
 
-        image_stream = kwargs['image_stream']
-
-        image_stream.seek(0)
-
-        image = Image.open(image_stream)
-
-        print('Image is %dx%d' % image.size)
-
-        image.verify()
+        self.callback(kwargs['image_stream'], kwargs['image_size'])
 
 
 observable = FrameChangeObservable()
@@ -69,40 +33,18 @@ observable = FrameChangeObservable()
 
 class SocketServerRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
-        print 'recevied socket request'
-
-        l = self.request.recv(1024)
+        print 'Received socket request'
 
         image_stream = io.BytesIO()
 
-        while l:
-            print "Receiving..."
+        l = self.request.recv(1024)
 
+        while l:
             image_stream.write(l)
 
             l = self.request.recv(1024)
 
-        image_stream.seek(0)
-
-        image = Image.open(image_stream)
-
-        print('Image is %dx%d' % image.size)
-
-        image.verify()
-
-        print "Done Receiving"
-
-        # cur_thread = threading.current_thread()
-
-        # response = "{}: {}".format(cur_thread.name, data)
-
-        observable.notify_observers('New image to process', image_stream=image_stream)
-
-        # print 'Connected with client', self.client_address
-
-        # print 'Received message: ' + response
-
-        # self.request.sendall('Hello govna')
+        observable.notify_observers('new.frame.available', image_stream=image_stream, image_size=image_stream.tell())
 
 
 class SocketServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
@@ -111,48 +53,34 @@ class SocketServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 
 class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    def write_frame(self, image_stream, image_size):
+        self.wfile.write('--frame')
+
+        self.send_header('Content-Type', 'image/jpeg')
+        self.send_header('Content-Length', image_size)
+        self.end_headers()
+
+        image_stream.seek(0)
+
+        self.wfile.write(image_stream.read())
+
     def do_GET(self):
         if self.path == '/':
-            observer = FrameChangeObserver()
-
-            observable.register_observer(observer)
-
-            self.send_response(200)
-            self.send_header('Age', 0)
-            self.send_header('Cache-Control', 'no-cache, private')
-            self.send_header('Pragma', 'no-cache')
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
-            self.end_headers()
-
-            count = 1
-
             try:
+                observer = FrameChangeObserver()
+                observer.callback = self.write_frame
+
+                self.send_response(200)
+                self.send_header('Age', 0)
+                self.send_header('Cache-Control', 'no-cache, private')
+                self.send_header('Pragma', 'no-cache')
+                self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
+                self.end_headers()
+
+                observable.register_observer(observer)
+
                 while True:
-                    if count % 2 == 0:
-                        file_name = '/Users/andrhahn/1.jpg'
-
-                    else:
-                        file_name = '/Users/andrhahn/2.jpg'
-
-                    f = open(file_name, 'rb')
-
-                    data = f.read()
-
-                    ####img = Image.open()
-
-                    self.wfile.write('--frame')
-
-                    self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', os.path.getsize(file_name))
-                    self.end_headers()
-
-                    self.wfile.write(data)
-
-                    f.close()
-
-                    time.sleep(2)
-
-                    count += 1
+                    time.sleep(1)
             except Exception as e:
                 logging.warning('Removed streaming client %s: %s', self.client_address, str(e))
         else:
