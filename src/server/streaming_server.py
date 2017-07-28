@@ -1,9 +1,13 @@
 import BaseHTTPServer
 import SocketServer
+import io
 import logging
 import os
 import threading
 import time
+from abc import ABCMeta, abstractmethod
+
+from PIL import Image
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -21,20 +25,43 @@ class Observable(object):
     def register_observer(self, observer):
         self.__observers.append(observer)
 
-    def notify_observers(self, *args, **kwargs):
-        print 'size of observers:', len(self.__observers)
+    def unregister_observer(self, observer):
+        if observer in self.__observers:
+            self.__observers.remove(observer)
 
+    def notify_observers(self, *args, **kwargs):
         for observer in self.__observers:
-            observer.on_change(*args, **kwargs)
+            observer.notify(*args, **kwargs)
+
+
+class Observer(object):
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def notify(self, *args, **kwargs):
+        pass
 
 
 class FrameChangeObservable(Observable, object):
     pass
 
 
-class FrameChangeObserver(Observable, object):
-    def on_change(self, *args):
-        print 'received frame change event:', args
+class FrameChangeObserver(Observer):
+    # def __init__(self):
+    #     self.frame = []
+
+    def notify(self, *args, **kwargs):
+        print 'received event:', args[0]
+
+        image_stream = kwargs['image_stream']
+
+        image_stream.seek(0)
+
+        image = Image.open(image_stream)
+
+        print('Image is %dx%d' % image.size)
+
+        image.verify()
 
 
 observable = FrameChangeObservable()
@@ -42,35 +69,34 @@ observable = FrameChangeObservable()
 
 class SocketServerRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
-        print 'recevied socket request!'
-
-        f = open('/Users/andrhahn/result.jpg', 'wb')
+        print 'recevied socket request'
 
         l = self.request.recv(1024)
+
+        image_stream = io.BytesIO()
 
         while l:
             print "Receiving..."
 
-            f.write(l)
+            image_stream.write(l)
 
             l = self.request.recv(1024)
 
-        f.close()
+        image_stream.seek(0)
+
+        image = Image.open(image_stream)
+
+        print('Image is %dx%d' % image.size)
+
+        image.verify()
 
         print "Done Receiving"
-
-        # while True:
-        #     data = self.request.recv(1024)
-        #
-        #     print 'received message'
-
-        ##data = self.request.recv(1024)
 
         # cur_thread = threading.current_thread()
 
         # response = "{}: {}".format(cur_thread.name, data)
 
-        observable.notify_observers('New frame to process!')
+        observable.notify_observers('New image to process', image_stream=image_stream)
 
         # print 'Connected with client', self.client_address
 
@@ -112,6 +138,8 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                     data = f.read()
 
+                    ####img = Image.open()
+
                     self.wfile.write('--frame')
 
                     self.send_header('Content-Type', 'image/jpeg')
@@ -132,28 +160,29 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
 
 
-socket_server = SocketServer((SOCKET_SERVER_HOST, SOCKET_SERVER_PORT), SocketServerRequestHandler)
+if __name__ == "__main__":
+    socket_server = SocketServer((SOCKET_SERVER_HOST, SOCKET_SERVER_PORT), SocketServerRequestHandler)
 
-http_server = BaseHTTPServer.HTTPServer((HTTP_SERVER_HOST, HTTP_SERVER_PORT), HttpRequestHandler)
+    http_server = BaseHTTPServer.HTTPServer((HTTP_SERVER_HOST, HTTP_SERVER_PORT), HttpRequestHandler)
 
-try:
-    print 'Starting socket server on port ', SOCKET_SERVER_PORT
+    try:
+        print 'Starting socket server on port ', SOCKET_SERVER_PORT
 
-    threading = threading.Thread(target=socket_server.serve_forever)
-    threading.daemon = True
-    threading.start()
+        threading = threading.Thread(target=socket_server.serve_forever)
+        threading.daemon = True
+        threading.start()
 
-    print 'Starting http server on port ', HTTP_SERVER_PORT
+        print 'Starting http server on port ', HTTP_SERVER_PORT
 
-    http_server.serve_forever()
-except KeyboardInterrupt:
-    pass
+        http_server.serve_forever()
+    except KeyboardInterrupt:
+        pass
 
-print 'Shutting down socket server...'
+    print 'Shutting down socket server...'
 
-socket_server.shutdown()
-socket_server.server_close()
+    socket_server.shutdown()
+    socket_server.server_close()
 
-print 'Shutting down http server...'
+    print 'Shutting down http server...'
 
-http_server.server_close()
+    http_server.server_close()
