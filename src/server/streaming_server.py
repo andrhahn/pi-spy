@@ -1,7 +1,8 @@
 import BaseHTTPServer
+import SocketServer
 import logging
 import os
-import socket
+import threading
 import time
 
 logging.basicConfig(level=logging.DEBUG)
@@ -21,13 +22,55 @@ class Observable(object):
         self.__observers.append(observer)
 
     def notify_observers(self, *args, **kwargs):
+        print 'size of observers:', len(self.__observers)
+
         for observer in self.__observers:
-            observer(*args, **kwargs)
+            observer.on_change(*args, **kwargs)
+
+
+class FrameChangeObservable(Observable, object):
+    pass
+
+
+class FrameChangeObserver(Observable, object):
+    def on_change(self, *args):
+        print 'received frame change event:', args
+
+
+observable = FrameChangeObservable()
+
+
+class SocketServerRequestHandler(SocketServer.BaseRequestHandler):
+    def handle(self):
+        print 'recevied socket request!'
+
+        #data = self.request.recv(1024)
+
+        #cur_thread = threading.current_thread()
+
+        #response = "{}: {}".format(cur_thread.name, data)
+
+        observable.notify_observers('New frame to process!')
+
+        #print 'Connected with client', self.client_address
+
+        #print 'Received message: ' + response
+
+        #self.request.sendall('Hello govna')
+
+
+class SocketServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
 
 
 class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
+            observer = FrameChangeObserver()
+
+            observable.register_observer(observer)
+
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
@@ -69,14 +112,16 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
 
 
-socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+socket_server = SocketServer((SOCKET_SERVER_HOST, SOCKET_SERVER_PORT), SocketServerRequestHandler)
 
 http_server = BaseHTTPServer.HTTPServer((HTTP_SERVER_HOST, HTTP_SERVER_PORT), HttpRequestHandler)
 
 try:
-    print 'Starting socket connection on port ', SOCKET_SERVER_PORT
+    print 'Starting socket server on port ', SOCKET_SERVER_PORT
 
-    socket_connection.connect((SOCKET_SERVER_HOST, SOCKET_SERVER_PORT))
+    threading = threading.Thread(target=socket_server.serve_forever)
+    threading.daemon = True
+    threading.start()
 
     print 'Starting http server on port ', HTTP_SERVER_PORT
 
@@ -84,9 +129,10 @@ try:
 except KeyboardInterrupt:
     pass
 
-print 'Shutting down socket connection...'
+print 'Shutting down socket server...'
 
-socket_connection.close()
+socket_server.shutdown()
+socket_server.server_close()
 
 print 'Shutting down http server...'
 
