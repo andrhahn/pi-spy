@@ -91,18 +91,23 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     socket_server = SocketServer((SOCKET_SERVER_HOST, SOCKET_SERVER_PORT), SocketServerRequestHandler)
 
+    print 'Starting socket server on port ', SOCKET_SERVER_PORT
+
+    socket_server_thread = threading.Thread(target=socket_server.serve_forever)
+    socket_server_thread.daemon = True
+    socket_server_thread.start()
+
     http_server = BaseHTTPServer.HTTPServer((HTTP_SERVER_HOST, HTTP_SERVER_PORT), HttpRequestHandler)
 
+    print 'Starting http server on port ', HTTP_SERVER_PORT
+
+    http_server_thread = threading.Thread(target=http_server.serve_forever)
+    http_server_thread.daemon = True
+    http_server_thread.start()
+
     try:
-        print 'Starting socket server on port ', SOCKET_SERVER_PORT
-
-        threading = threading.Thread(target=socket_server.serve_forever)
-        threading.daemon = True
-        threading.start()
-
-        print 'Starting http server on port ', HTTP_SERVER_PORT
-
-        http_server.serve_forever()
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
         pass
 
