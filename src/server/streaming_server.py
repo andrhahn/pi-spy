@@ -44,19 +44,39 @@ class SocketServerRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         print 'recevied socket request!'
 
-        #data = self.request.recv(1024)
+        f = open('/Users/andrhahn/result.jpg', 'wb')
 
-        #cur_thread = threading.current_thread()
+        l = self.request.recv(1024)
 
-        #response = "{}: {}".format(cur_thread.name, data)
+        while l:
+            print "Receiving..."
+
+            f.write(l)
+
+            l = self.request.recv(1024)
+
+        f.close()
+
+        print "Done Receiving"
+
+        # while True:
+        #     data = self.request.recv(1024)
+        #
+        #     print 'received message'
+
+        ##data = self.request.recv(1024)
+
+        # cur_thread = threading.current_thread()
+
+        # response = "{}: {}".format(cur_thread.name, data)
 
         observable.notify_observers('New frame to process!')
 
-        #print 'Connected with client', self.client_address
+        # print 'Connected with client', self.client_address
 
-        #print 'Received message: ' + response
+        # print 'Received message: ' + response
 
-        #self.request.sendall('Hello govna')
+        # self.request.sendall('Hello govna')
 
 
 class SocketServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
