@@ -20,7 +20,7 @@ if __name__ == "__main__":
         #while True:
             #print 'Writing file'
 
-        utils.write_bytes_to_socket(socket_connection, '/Users/andrhahn/1.jpg')
+        utils.write_bytes_to_socket(socket_connection, '/Users/andrhahn/2.jpg')
 
             #time.sleep(2)
 

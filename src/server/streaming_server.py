@@ -5,6 +5,7 @@ import logging
 import threading
 import time
 
+import utils
 from observable import Observable
 from observer import Observer
 
@@ -76,6 +77,17 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.send_header('Pragma', 'no-cache')
                 self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
                 self.end_headers()
+
+                stream, stream_size = utils.copy_file_to_stream('/Users/andrhahn/1.jpg')
+
+                self.write_frame(stream, stream_size)
+
+                self.wfile.write('\n')
+                self.wfile.flush()
+                self.wfile.flush()
+                self.wfile.flush()
+
+
 
                 observable.register_observer(observer)
 

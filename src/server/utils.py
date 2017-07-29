@@ -2,6 +2,27 @@ import io
 import os
 
 
+def copy_file_to_stream(input_file_name):
+    """Copies a file fto a stream"""
+
+    input_file = open(input_file_name, 'rb')
+
+    stream = io.BytesIO()
+
+    l = input_file.read(1024)
+
+    while l:
+        stream.write(l)
+
+        l = input_file.read(1024)
+
+    stream_size = stream.tell()
+
+    stream.write('\r\n\r\n'.encode('UTF-8'))
+
+    return stream, stream_size
+
+
 def copy_file_with_stream(input_file_name, output_file_name):
     """Copies a file from the file system into an output file on the file system using streams"""
 
@@ -62,6 +83,7 @@ def write_file_to_http_wfile_with_streams(base_http_request_handler, file_name):
 
     input_file.close()
 
+
 def write_image_stream_to_http_wfile_with_streams(base_http_request_handler, image_stream):
     l = image_stream.read(1024)
 
@@ -74,6 +96,7 @@ def write_image_stream_to_http_wfile_with_streams(base_http_request_handler, ima
     output_file.close()
 
     write_file_to_http_wfile(base_http_request_handler, '/Users/andrhahn/out1.jpg')
+
 
 def write_image_stream_to_file(file_name, image_stream):
     l = image_stream.read(1024)
