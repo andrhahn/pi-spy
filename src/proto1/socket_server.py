@@ -16,11 +16,9 @@ class UploadRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         global frame
 
-        print 'Connected with client for upload'
-
-        mf = self.request.makefile('rb')
-
         try:
+            mf = self.request.makefile('rb')
+
             while True:
                 image_len = struct.unpack('<L', mf.read(struct.calcsize('<L')))[0]
 
@@ -43,38 +41,19 @@ class UploadRequestHandler(SocketServer.BaseRequestHandler):
 
                 print 'Received image:', image.size
         finally:
-            print 'Connection with client lost'
+            print 'Disconnected with client'
 
 
 class DownloadRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         global frame
 
-        print 'Connected with client for download'
+        try:
+            print 'Image size being downloaded:', frame.tell()
 
-        mf = self.request.makefile('rb')
-
-        while True:
-            image_len = struct.unpack('<L', mf.read(struct.calcsize('<L')))[0]
-
-            if not image_len:
-                break
-
-            image_stream = io.BytesIO()
-
-            image_stream.write(mf.read(image_len))
-
-            image_stream.seek(0)
-
-            image = PIL.Image.open(image_stream)
-
-            image.verify()
-
-            image_stream.seek(0)
-
-            frame = image_stream
-
-            print 'Received image:', image.size
+            self.request.sendall(frame)
+        finally:
+            print 'Disconnected with client'
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
