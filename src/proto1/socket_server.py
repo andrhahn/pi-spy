@@ -1,27 +1,34 @@
+import SocketServer
 import io
 import logging
-import socket
 import struct
-import thread
+import threading
+import time
 
 import PIL.Image
 
 logging.basicConfig(level=logging.DEBUG)
 
+frame = None
 
-def handler(conn):
-    print 'Connected with client'
 
-    try:
+class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
+    def handle(self):
+        global frame
+
+        print 'Connected with client'
+
+        mf = self.request.makefile('rb')
+
         while True:
-            image_len = struct.unpack('<L', conn.read(struct.calcsize('<L')))[0]
+            image_len = struct.unpack('<L', mf.read(struct.calcsize('<L')))[0]
 
             if not image_len:
                 break
 
             image_stream = io.BytesIO()
 
-            image_stream.write(conn.read(image_len))
+            image_stream.write(mf.read(image_len))
 
             image_stream.seek(0)
 
@@ -29,28 +36,47 @@ def handler(conn):
 
             image.verify()
 
+            image_stream.seek(0)
+
+            frame = image_stream
+
             print 'Received image:', image.size
-    finally:
-        conn.close()
+
+
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+    pass
+
+
+def start_server(host, port):
+    server = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
+
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
+    server_thread.start()
+
+    return server
+
+
+def stop_server(server):
+    server.shutdown()
+    server.server_close()
 
 
 if __name__ == "__main__":
-    server_sock = socket.socket()
+    print 'Starting upload server on port ', 8001
+    upload_server = start_server('localhost', 8001)
 
-    server_sock.bind(('localhost', 8001))
-
-    server_sock.listen(0)
-
-    print 'Starting socket server on port ', 8001
+    print 'Starting download server on port ', 8002
+    download_server = start_server('localhost', 8002)
 
     try:
         while True:
-            print 'Waiting for connection...'
-
-            thread.start_new_thread(handler, (server_sock.accept()[0].makefile('rb'),))
+            time.sleep(1)
     except KeyboardInterrupt:
         pass
 
-    print 'Shutting down socket server...'
+    print 'Stopping upload server'
+    stop_server(upload_server)
 
-    server_sock.close()
+    print 'Stopping upload server'
+    stop_server(download_server)

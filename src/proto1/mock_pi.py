@@ -18,8 +18,6 @@ try:
     while True:
         stream.write(frames[int(time.time()) % 3])
 
-        print 'Sending image...'
-
         conn.write(struct.pack('<L', stream.tell()))
 
         conn.flush()
@@ -32,7 +30,7 @@ try:
 
         stream.truncate()
 
-        time.sleep(2)
+        time.sleep(0.5)
 finally:
     conn.write(struct.pack('<L', 0))
 
