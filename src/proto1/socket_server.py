@@ -12,11 +12,45 @@ logging.basicConfig(level=logging.DEBUG)
 frame = None
 
 
-class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
+class UploadRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         global frame
 
-        print 'Connected with client'
+        print 'Connected with client for upload'
+
+        mf = self.request.makefile('rb')
+
+        try:
+            while True:
+                image_len = struct.unpack('<L', mf.read(struct.calcsize('<L')))[0]
+
+                if not image_len:
+                    break
+
+                image_stream = io.BytesIO()
+
+                image_stream.write(mf.read(image_len))
+
+                image_stream.seek(0)
+
+                image = PIL.Image.open(image_stream)
+
+                image.verify()
+
+                image_stream.seek(0)
+
+                frame = image_stream
+
+                print 'Received image:', image.size
+        finally:
+            print 'Connection with client lost'
+
+
+class DownloadRequestHandler(SocketServer.BaseRequestHandler):
+    def handle(self):
+        global frame
+
+        print 'Connected with client for download'
 
         mf = self.request.makefile('rb')
 
@@ -47,8 +81,8 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass
 
 
-def start_server(host, port):
-    server = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
+def start_server(host, port, handler):
+    server = ThreadedTCPServer((host, port), handler)
 
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
@@ -67,8 +101,8 @@ def stop_server(server):
 
 
 if __name__ == "__main__":
-    upload_server = start_server('localhost', 8001)
-    download_server = start_server('localhost', 8002)
+    upload_server = start_server('localhost', 8001, UploadRequestHandler)
+    download_server = start_server('localhost', 8002, DownloadRequestHandler)
 
     try:
         while True:
