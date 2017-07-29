@@ -37,7 +37,7 @@ class UploadRequestHandler(SocketServer.BaseRequestHandler):
 
                 image_stream.seek(0)
 
-                frame = image_stream
+                ##frame = image_stream
 
                 print 'Received image:', image.size
         finally:

@@ -1,12 +1,52 @@
 import logging
+import socket
+import threading
+import time
 
 from flask import Flask, Response
-
-from socket_client import SocketClient
 
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
+
+
+class SocketClient(object):
+    thread = None
+    frame = None
+
+    def initialize(self):
+        if SocketClient.thread is None:
+            SocketClient.thread = threading.Thread(target=self._thread)
+            SocketClient.thread.start()
+
+            while self.frame is None:
+                time.sleep(0)
+
+    def get_frame(self):
+        self.initialize()
+
+        return self.frame
+
+    @classmethod
+    def _thread(cls):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(('localhost', 8002))
+
+        print 'Connected to socket server'
+
+        try:
+            while True:
+                stream = sock.recv(1024)  # todo: get stream with all the pieces and assemble
+
+                if stream:
+                    print 'received part of stream...'
+                    # cls.frame = stream.read()
+                else:
+                    time.sleep(1)
+        finally:
+            sock.close()
+
+            cls.thread = None
 
 
 def gen(socket_client):
@@ -18,8 +58,9 @@ def gen(socket_client):
 
 @app.route('/video-feed')
 def video_feed():
-    return Response(gen(SocketClient()),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+    socket_client = SocketClient()
+
+    return Response(gen(socket_client), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 if __name__ == '__main__':
