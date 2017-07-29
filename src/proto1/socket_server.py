@@ -54,19 +54,20 @@ def start_server(host, port):
     server_thread.daemon = True
     server_thread.start()
 
+    print 'Starting server on port ', port
+
     return server
 
 
 def stop_server(server):
+    print 'Stopping server'
+
     server.shutdown()
     server.server_close()
 
 
 if __name__ == "__main__":
-    print 'Starting upload server on port ', 8001
     upload_server = start_server('localhost', 8001)
-
-    print 'Starting download server on port ', 8002
     download_server = start_server('localhost', 8002)
 
     try:
@@ -75,8 +76,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
 
-    print 'Stopping upload server'
     stop_server(upload_server)
-
-    print 'Stopping upload server'
     stop_server(download_server)
