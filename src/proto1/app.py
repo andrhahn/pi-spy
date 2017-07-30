@@ -8,6 +8,8 @@ import time
 import PIL.Image
 from flask import Flask, Response
 
+import config
+
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -73,16 +75,18 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    print 'Starting socket server on port ', 8001
+    socket_server_port = int(config.get('socket_server_port'))
 
-    socket_server = ThreadedTCPServer(('localhost', 8001), TCPRequestHandler)
+    print 'Starting socket server on port ', socket_server_port
+
+    socket_server = ThreadedTCPServer((config.get('socket_server_host'), socket_server_port), TCPRequestHandler)
 
     try:
         socket_server_thread = threading.Thread(target=socket_server.serve_forever)
         socket_server_thread.daemon = True
         socket_server_thread.start()
 
-        app.run(port=8000, threaded=True)
+        app.run(port=int(config.get('web_server_port')), threaded=True)
     except KeyboardInterrupt:
         pass
 

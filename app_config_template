@@ -1,6 +1,9 @@
 [default]
 log_level =
 
+socket_server_host =
+socket_server_port =
+
 images_path =
 videos_path =
 logs_path =

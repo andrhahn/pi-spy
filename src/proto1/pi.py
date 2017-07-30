@@ -5,8 +5,11 @@ import time
 
 import picamera
 
+import config
+
 client_socket = socket.socket()
-client_socket.connect(('localhost', 8001))
+
+client_socket.connect(('localhost', config.get('socket_server_port')))
 
 connection = client_socket.makefile('wb')
 
