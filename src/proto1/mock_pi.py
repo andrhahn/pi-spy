@@ -2,13 +2,17 @@ import io
 import socket
 import struct
 import time
+import config
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(('localhost', 8001))
+
+socket_server_port = int(config.get('socket_server_port'))
+
+sock.connect((config.get('socket_server_host'), socket_server_port))
 
 conn = sock.makefile('wb')
 
-print 'Connected to socket server on port', 8001
+print 'Connected to socket server on port:', socket_server_port
 
 if __name__ == "__main__":
     try:

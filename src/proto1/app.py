@@ -86,7 +86,7 @@ if __name__ == '__main__':
         socket_server_thread.daemon = True
         socket_server_thread.start()
 
-        app.run(port=int(config.get('web_server_port')), threaded=True)
+        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')), threaded=True)
     except KeyboardInterrupt:
         pass
 
