@@ -9,7 +9,7 @@ import config
 
 client_socket = socket.socket()
 
-client_socket.connect((config.get('socket_server_host'), config.get('socket_server_port')))
+client_socket.connect((config.get('socket_server_host'), int(config.get('socket_server_port'))))
 
 connection = client_socket.makefile('wb')
 
