@@ -67,6 +67,11 @@ def video_feed():
     return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+@app.route('/test')
+def hello_world():
+    return 'Hello, World!'
+
+
 if __name__ == '__main__':
     print 'Starting socket server on port ', 8001
 
