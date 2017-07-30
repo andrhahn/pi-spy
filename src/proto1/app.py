@@ -77,7 +77,7 @@ if __name__ == '__main__':
         socket_server_thread.daemon = True
         socket_server_thread.start()
 
-        app.run(host='localhost', port=8000, threaded=True)
+        app.run(port=8000, threaded=True)
     except KeyboardInterrupt:
         pass
 
