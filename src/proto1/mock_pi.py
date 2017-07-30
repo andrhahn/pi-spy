@@ -17,7 +17,7 @@ if __name__ == "__main__":
         frames = [open('1.jpg', 'rb').read(), open('2.jpg', 'rb').read(), open('3.jpg', 'rb').read()]
 
         while True:
-            stream.write(frames[int(time.time()) % 3])
+            stream.write(frames[1])
 
             conn.write(struct.pack('<L', stream.tell()))
 

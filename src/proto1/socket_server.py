@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 frame = None
 
 
-class UploadRequestHandler(SocketServer.BaseRequestHandler):
+class RequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         global frame
 
@@ -44,44 +44,18 @@ class UploadRequestHandler(SocketServer.BaseRequestHandler):
             print 'Disconnected with client'
 
 
-class DownloadRequestHandler(SocketServer.BaseRequestHandler):
-    def handle(self):
-        global frame
-
-        try:
-            print 'Image size being downloaded:', frame.tell()
-
-            self.request.sendall(frame)
-        finally:
-            print 'Disconnected with client'
-
-
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass
 
 
-def start_server(host, port, handler):
-    server = ThreadedTCPServer((host, port), handler)
+if __name__ == "__main__":
+    server = ThreadedTCPServer(('localhost', 8001), RequestHandler)
 
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()
 
-    print 'Starting server on port ', port
-
-    return server
-
-
-def stop_server(server):
-    print 'Stopping server'
-
-    server.shutdown()
-    server.server_close()
-
-
-if __name__ == "__main__":
-    upload_server = start_server('localhost', 8001, UploadRequestHandler)
-    download_server = start_server('localhost', 8002, DownloadRequestHandler)
+    print 'Starting server on port ', 8001
 
     try:
         while True:
@@ -89,5 +63,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
 
-    stop_server(upload_server)
-    stop_server(download_server)
+        print 'Stopping server'
+
+    server.shutdown()
+    server.server_close()
