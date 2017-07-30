@@ -25,6 +25,8 @@ The scheduler.py process is focused on polling for any newly captured motion det
     
     sudo pip install boto3
     
+    sudo pip install Pillow
+    
     mkdir -p /home/pi/pi-spy-files/logs
     
     mkdir -p /home/pi/pi-spy-files/images
