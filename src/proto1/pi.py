@@ -17,6 +17,8 @@ try:
     camera = picamera.PiCamera()
 
     camera.resolution = (640, 480)
+    camera.vflip = True
+    camera.hflip = True
 
     camera.start_preview()
 
