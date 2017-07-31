@@ -2,6 +2,7 @@ import io
 import socket
 import struct
 import time
+
 import config
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,7 +22,11 @@ if __name__ == "__main__":
         frames = [open('1.jpg', 'rb').read(), open('2.jpg', 'rb').read(), open('3.jpg', 'rb').read()]
 
         while True:
-            stream.write(frames[1])
+            frame_num = int(time.time()) % 3
+
+            print 'Sending image:', frame_num
+
+            stream.write(frames[frame_num])
 
             conn.write(struct.pack('<L', stream.tell()))
 
@@ -35,7 +40,7 @@ if __name__ == "__main__":
 
             stream.truncate()
 
-            time.sleep(0.5)
+            time.sleep(1)
     except KeyboardInterrupt:
         pass
 
