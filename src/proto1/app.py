@@ -7,6 +7,7 @@ import struct
 import threading
 import uuid
 import time
+import gevent
 
 from flask import Flask, Response
 
@@ -21,7 +22,7 @@ connected_clients = []
 
 def generate(connected_client):
     while True:
-        time.sleep(5)
+        gevent.sleep(5)
 
         print 'queue size at time of generate():', connected_client['queue'].qsize()
 
@@ -33,7 +34,7 @@ def generate(connected_client):
 def index():
     print 'Connected client: ', uuid.uuid4(), 'on thread:', threading.current_thread().name
 
-    time.sleep(100)
+    gevent.sleep(100)
 
     connected_client = {'id': uuid.uuid4(), 'queue': Queue.Queue(50)}
 
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     try:
         print 'main thread:', threading.current_thread().name
 
-        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')))
+        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')), threaded=True)
     except KeyboardInterrupt:
         pass
 
