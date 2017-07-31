@@ -24,8 +24,6 @@ if __name__ == "__main__":
         while True:
             frame_num = int(time.time()) % 3
 
-            print 'Sending image:', frame_num
-
             stream.write(frames[frame_num])
 
             conn.write(struct.pack('<L', stream.tell()))

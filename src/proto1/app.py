@@ -8,8 +8,6 @@ from flask import Flask, Response
 
 import config
 
-# import PIL.Image
-
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -21,11 +19,7 @@ def generate():
 
         ready_to_read, ready_to_write, has_errors = select.select(inputs, [], [])
 
-        sock = ready_to_read[0]
-
-        clientsock, clientaddr = sock.accept()
-
-        conn = clientsock.makefile('rb')
+        conn = ready_to_read[0].accept()[0].makefile('rb')
 
         while True:
             image_len = struct.unpack('<L', conn.read(struct.calcsize('<L')))[0]
@@ -38,11 +32,6 @@ def generate():
             image_stream.write(conn.read(image_len))
 
             image_stream.seek(0)
-
-            # image = PIL.Image.open(image_stream)
-            # image.verify()
-            # print 'Image verified'
-            # image_stream.seek(0)
 
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + image_stream.read() + b'\r\n')
