@@ -5,6 +5,7 @@ import select
 import socket
 import struct
 import threading
+import uuid
 
 from flask import Flask, Response
 
@@ -14,18 +15,22 @@ logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
-my_queue = Queue.Queue()
+connected_clients = []
 
 
-def generate():
+def generate(connected_client):
     while True:
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + my_queue.get().read() + b'\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + connected_client['queue'].get().read() + b'\r\n')
 
 
 @app.route('/')
 def video_feed():
-    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    connected_client = {'id': uuid.uuid4(), 'queue': Queue.Queue()}
+
+    connected_clients.append(connected_client)
+
+    return Response(generate(connected_client), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def process_socket_connections():
@@ -45,7 +50,8 @@ def process_socket_connections():
 
         image_stream.seek(0)
 
-        my_queue.put(image_stream)
+        for connected_client in connected_clients:
+            connected_client['queue'].put(image_stream)
 
 
 if __name__ == '__main__':
@@ -62,7 +68,7 @@ if __name__ == '__main__':
     sock_listener_thread.start()
 
     try:
-        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')), debug=False, threaded=True)
+        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')), threaded=True)
     except KeyboardInterrupt:
         pass
 
