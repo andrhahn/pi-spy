@@ -48,6 +48,7 @@ if __name__ == '__main__':
     print 'Starting socket server on port ', socket_server_port
 
     socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_server.setblocking(0)
     socket_server.bind((config.get('socket_server_host'), socket_server_port))
     socket_server.listen(5)
 
