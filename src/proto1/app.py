@@ -93,7 +93,7 @@ if __name__ == '__main__':
     try:
         print 'main thread:', threading.current_thread().name
 
-        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')), debug=True, threaded=True)
+        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')))
     except KeyboardInterrupt:
         pass
 
