@@ -40,6 +40,8 @@ The scheduler.py process is focused on polling for any newly captured motion det
     
     python scheduler.py
     
+    run on linux: gunicorn --bind 0.0.0.0:8000 wsgi
+    
 ### License
 
 [The MIT License](http://opensource.org/licenses/MIT)
