@@ -1,6 +1,5 @@
 import logging
 import socket
-import time
 
 import utils
 
