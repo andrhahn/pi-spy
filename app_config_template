@@ -1,6 +1,9 @@
 [default]
 log_level =
 
+queue_server_host =
+queue_server_port =
+
 socket_server_host =
 socket_server_port =
 
