@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 class RequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
-        print 'process socket connections thread:', threading.current_thread().name
+        print 'Process socket connections thread:', threading.current_thread().name
 
         try:
             mf = self.request.makefile('rb')
