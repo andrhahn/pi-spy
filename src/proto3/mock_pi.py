@@ -1,9 +1,12 @@
 import io
+import logging
 import socket
 import struct
 import time
 
 import config
+
+logging.basicConfig(level=logging.INFO)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

@@ -9,7 +9,7 @@ import pika
 
 import config
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 class RequestHandler(SocketServer.BaseRequestHandler):
