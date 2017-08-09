@@ -14,17 +14,7 @@ app = Flask(__name__)
 
 
 def generate():
-    queue_channel = queue_connection.channel()
-
-    queue_channel.exchange_declare(exchange='images', exchange_type='fanout')
-
-    result = queue_channel.queue_declare(exclusive=True)
-
-    queue_name = result.method.queue
-
-    queue_channel.queue_bind(exchange='images', queue=queue_name)
-
-    print 'Waiting for images.'
+    print 'generate() called...'
 
     def callback(ch, method, properties, body):
         print 'Received message.'
@@ -41,10 +31,12 @@ def generate():
 
         print 'Image verified.'
 
-        # yield (b'--frame\r\n'
-        #        b'Content-Type: image/jpeg\r\n\r\n' + body + b'\r\n')
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + body + b'\r\n')
 
-    queue_channel.basic_consume(callback, queue=queue_name, no_ack=True)
+    print 'Waiting for images.'
+
+    queue_channel.basic_get(queue=queue_name, no_ack=True)
 
     print 'a...'
 
@@ -101,10 +93,20 @@ if __name__ == "__main__":
     #
     # print 'b...'
 
+    queue_channel = queue_connection.channel()
+
+    queue_channel.exchange_declare(exchange='images', exchange_type='fanout')
+
+    result = queue_channel.queue_declare(exclusive=True)
+
+    queue_name = result.method.queue
+
+    queue_channel.queue_bind(exchange='images', queue=queue_name)
+
     try:
         print 'Started web server on main thread:', threading.current_thread().name
 
-        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')), threaded=True, debug=True)
+        app.run(host=config.get('web_server_host'), port=int(config.get('web_server_port')), threaded=True, debug=False)
     except KeyboardInterrupt:
         pass
 
