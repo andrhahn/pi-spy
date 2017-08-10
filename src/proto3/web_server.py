@@ -1,3 +1,4 @@
+import Queue
 import io
 import logging
 import threading
@@ -12,13 +13,11 @@ logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
+queue = Queue.Queue(1)
 
-def generate():
-    print 'generate() called...'
 
+def populate_queue():
     def callback(ch, method, properties, body):
-        print 'Received message.'
-
         image_stream = io.BytesIO()
 
         image_stream.write(body)
@@ -29,20 +28,21 @@ def generate():
 
         image.verify()
 
-        print 'Image verified.'
+        image_stream.seek(0)
 
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + body + b'\r\n')
+        queue.put(image_stream)
 
-    print 'Waiting for images.'
-
-    queue_channel.basic_get(queue=queue_name, no_ack=True)
-
-    print 'a...'
+    queue_channel.basic_consume(callback, queue=queue_name, no_ack=True)
 
     queue_channel.start_consuming()
 
-    print 'b...'
+
+def generate():
+    while True:
+        image_stream = queue.get()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + image_stream.read() + b'\r\n')
 
 
 @app.route('/')
@@ -56,42 +56,7 @@ if __name__ == "__main__":
     print 'Connecting to queue server'
 
     queue_connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='127.0.0.1', port=int(config.get('queue_server_port'))))
-
-    # queue_channel = queue_connection.channel()
-    #
-    # queue_channel.exchange_declare(exchange='images', exchange_type='fanout')
-    #
-    # result = queue_channel.queue_declare(exclusive=True)
-    #
-    # queue_name = result.method.queue
-    #
-    # queue_channel.queue_bind(exchange='images', queue=queue_name)
-    #
-    # print 'Waiting for images.'
-    #
-    # def callback(ch, method, properties, body):
-    #     print 'Received message.'
-    #
-    #     image_stream = io.BytesIO()
-    #
-    #     image_stream.write(body)
-    #
-    #     image_stream.seek(0)
-    #
-    #     image = PIL.Image.open(image_stream)
-    #
-    #     image.verify()
-    #
-    #     print 'Image verified.'
-    #
-    # queue_channel.basic_consume(callback, queue=queue_name, no_ack=True)
-    #
-    # print 'a...'
-    #
-    # queue_channel.start_consuming()
-    #
-    # print 'b...'
+        pika.ConnectionParameters(host=config.get('queue_server_host'), port=int(config.get('queue_server_port'))))
 
     queue_channel = queue_connection.channel()
 
@@ -102,6 +67,10 @@ if __name__ == "__main__":
     queue_name = result.method.queue
 
     queue_channel.queue_bind(exchange='images', queue=queue_name)
+
+    socket_server_thread = threading.Thread(target=populate_queue)
+    socket_server_thread.daemon = True
+    socket_server_thread.start()
 
     try:
         print 'Started web server on main thread:', threading.current_thread().name
