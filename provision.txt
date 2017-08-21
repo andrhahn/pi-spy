@@ -1,0 +1,54 @@
+install ubuntu:
+---------------
+- manual setup via aws console
+- open ports
+	- todo...
+
+
+ubuntu: install tinc:
+---------------------
+
+
+ubuntu: install nginx:
+----------------------
+sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev
+wget http://nginx.org/download/nginx-1.13.4.tar.gz
+wget https://github.com/arut/nginx-rtmp-module/archive/master.zip
+tar -zxvf nginx-1.13.4.tar.gz
+sudo apt-get install unzip
+unzip master.zip
+cd nginx-1.13.4
+ ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-debug
+make
+sudo make install
+sudo mkdir /tmp/hls
+sudo mkdir /tmp/dash
+sudo chmod -R 777 /tmp/hls
+sudo chmod -R 777 /tmp/dash
+sudo cp ~/nginx-rtmp-module-master/stat.xsl /usr/local/nginx/html/
+sudo cp ~/working/nginx-rtmp-module-master/stat.xsl /usr/local/nginx/html/
+
+
+ubuntu: install node js:
+------------------------
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+
+commands:
+---------
+sudo service nginx start
+sudo service nginx stop
+
+
+locations/files:
+----------------
+nginx dir: /usr/local/nginx
+nginx conf dir: /usr/local/nginx/conf
+nginx logs dir: /usr/local/nginx/logs
+
+
+links:
+------
+stat: http://<ip address>/stat
+
