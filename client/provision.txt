@@ -1,0 +1,82 @@
+ubuntu: setup
+---------------
+- create lightsail ubuntu instance
+- create static ip
+- download ssh key and place in ~/.aws (with chmod 400 on the file)
+- sudo apt-get update -y
+- open ports   # todo...
+
+
+ubuntu: install nginx:
+----------------------
+sudo apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev
+wget http://nginx.org/download/nginx-1.13.4.tar.gz
+wget https://github.com/arut/nginx-rtmp-module/archive/master.zip
+tar -zxvf nginx-1.13.4.tar.gz
+sudo apt-get install -y unzip
+unzip master.zip
+cd nginx-1.13.4
+ ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-debug
+make
+sudo make install
+sudo wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O /etc/init.d/nginx
+sudo chmod +x /etc/init.d/nginx
+sudo update-rc.d nginx defaults
+sudo mkdir /tmp/hls
+sudo mkdir /tmp/dash
+sudo chmod -R 777 /tmp/hls
+sudo chmod -R 777 /tmp/dash
+sudo cp ~/nginx-rtmp-module-master/stat.xsl /usr/local/nginx/html/
+
+
+ubuntu: install node js:
+------------------------
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+
+ubuntu: install tinc:
+---------------------
+https://www.digitalocean.com/community/tutorials/how-to-install-tinc-and-set-up-a-basic-vpn-on-ubuntu-14-04
+sudo apt-get install -y tinc
+sudo mkdir -p /etc/tinc/myvpn/hosts
+sudo nano /etc/tinc/myvpn/tinc.conf
+	Name = andy
+	AddressFamily = ipv4
+	Interface = tun0
+sudo nano /etc/tinc/myvpn/hosts/andy
+	Address = 34.233.40.114
+	Subnet = 10.0.0.1/32
+sudo tincd -n myvpn -K4096
+sudo nano /etc/tinc/myvpn/tinc-up
+	#!/bin/sh
+	ifconfig $INTERFACE 10.0.0.1 netmask 255.255.255.0
+sudo nano /etc/tinc/myvpn/tinc-down
+	#!/bin/sh
+	ifconfig $INTERFACE down
+sudo chmod 755 /etc/tinc/myvpn/tinc-*
+
+
+rpi: install tinc:
+------------------
+sudo mkdir -p /etc/tinc/myvpn/hosts
+sudo nano /etc/tinc/myvpn/tinc.conf
+
+
+commands:
+---------
+sudo service nginx start
+sudo service nginx stop
+
+
+locations/files:
+----------------
+nginx dir: /usr/local/nginx
+nginx conf dir: /usr/local/nginx/conf
+nginx logs dir: /usr/local/nginx/logs
+
+
+links:
+------
+stat: http://<ip address>/stat
+

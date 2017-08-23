@@ -1,5 +1,7 @@
-# ssh into rpi
-ssh pi@raspberrypi.local
+# ssh commands
+ssh ubuntu@23.20.92.118 -i ~/.aws/LightsailDefaultPrivateKey-us-east-1.pem
+ssh ubuntu@34.233.40.114 -i ~/.aws/LightsailDefaultPrivateKey-us-east-1.pem
+ssh pi@10.0.0.2
 
 # run client via ssh
 (git pull && cd client && python detect_motion.py)
@@ -13,3 +15,66 @@ scp /Users/andrhahn/projects/pi-spy/app_config pi@raspberrypi.local:/home/pi/pi-
 
 # enable auto login via ssh keys
 http://support.modwest.com/content/20/90/en/how-do-i-get-ssh-to-authenticate-me-via-publicprivate-keypairs-instead-of-by-password.html
+
+# nginx
+nginx dir: /usr/local/nginx
+nginx conf dir: /usr/local/nginx/conf
+nginx logs dir: /usr/local/nginx/logs
+sudo service nginx start
+sudo service nginx stop
+http://23.20.92.118/stat
+
+# raspivid
+raspivid -n -vf -hf -t 0 -w 640 -h 480 -fps 25 -b 500000 -o - | ffmpeg -re -i - -vcodec copy -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://23.20.92.118/show/stream
+raspivid -w 640 -h 480 -t 10000000 -fps 25 -o - | avconv  -i - -vcodec copy -an -f flv rtmp://10.0.0.1/live/my-stream
+raspivid --verbose --nopreview -hf -vf --width 640 --height 480 --framerate 15 --bitrate 1000000 --profile baseline --timeout 0 -o - | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=10.0.0.1 port=8004
+raspivid -w 640 -h 480 -t 10000000 -fps 25 -o - | avconv  -i - -vcodec copy -an -f flv rtmp://10.0.0.1/live/my-stream
+raspivid -o - -t 0 -vf -hf -fps 10 -b 500000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128k -g 50 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/STREAM-KEY
+raspivid -o - -t 0 -vf -hf -fps 10 -b 500000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128k -g 50 -strict experimental -f flv rtmp://23.20.92.118/live/my-stream
+raspivid -o - -t 0 -vf -hf -fps 10 -b 500000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128k -g 50 -strict experimental -f flv rtmp://23.20.92.118/live/my-stream
+raspivid -hf -vf -fl -pf main -a 8 -mm matrix -w 640 -h 480 -g 250 -t 0 -b 2048000 -o - | avconv -re -i - -nostats -c copy -copyts -an -r 25 -f flv rtmp://mercure:1935/live/cam-1
+raspivid --verbose --nopreview -hf -vf --width 640 --height 480 --framerate 15 --bitrate 1000000 --profile baseline --timeout 0 -o - | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=10.0.0.1 port=8004
+raspivid -w 640 -h 480 -hf -vf -t 10000000 -b 180888 -fps 10 -o - | avconv  -i - -vcodec copy -an -f flv rtmp://10.0.0.1/live/my-stream
+raspivid -vf -t 0 -fps 25 -b 2000000 -o - | ffmpeg -i - -vcodec copy -an -r 25 -f flv rtmp://23.20.92.118/live/my-stream
+raspivid -vf -t 0 -fps 25 -b 2000000 -o - | ffmpeg -i - -vcodec copy -an -r 25 -f flv rtmp://23.20.92.118/live/my-stream
+raspivid -o - -t 0 -vf -hf -fps 10 -b 500000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128k -g 50 -strict experimental -f flv rtmp://23.20.92.118/live/my-stream
+raspivid -t 999999 -o - | nc 10.50.0.57 5001
+
+# rtmp
+rtmp://23.20.92.118/live/my-stream
+
+# ffmpeg
+sudo apt-get install ffmpeg
+ffmpeg -re -f video4linux2 -i ~/drop.avi -vcodec libx264 -vprofile baseline -acodec aac -strict -2 -f flv rtmp://23.20.92.118/live/my-stream
+ffmpeg -loglevel verbose -re -i ~/drop.avi  -vcodec libx264 -vprofile baseline -acodec libmp3lame -ar 44100 -ac 1 -f flv rtmp://23.20.92.118/live/my-stream
+ffmpeg -re -i ~/drop.avi -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://23.20.92.118/live/my-stream
+ffmpeg -r 30 -i video_in.h264 -vcodec copy video_out.mp4
+ffmpeg -r 30 -i raw.h264 -vcodec copy converted.mp4
+ffmpeg -re -f video4linux2 -i /dev/video0 -vcodec libx264 -vprofile baseline -acodec aac -strict -2 -f flv rtmp://23.20.92.118/live/my-stream
+
+# mp4box
+sudo apt-get install gpac
+sudo MP4Box -fps 30 -add before.h264 before.mp4
+sudo MP4Box -cat before.mp4 -cat after.mp4 -new combined.mp4
+MP4Box -add video.h264 output.mp4
+
+# omxplayer
+sudo apt-get -y install omxplayer
+omxplayer myvid.mp4
+
+# tinc
+sudo service tinc start
+sudo service tinc stop
+sudo tincd -n myvpn -d5 -D
+
+# latest
+raspivid -n -vf -hf -t 0 -w 640 -h 480 -fps 25 -b 500000 -o - | ffmpeg -i - -vcodec copy -an -f flv rtmp://10.0.0.1/live/my-stream
+raspivid -n -vf -hf -t 0 -w 640 -h 480 -fps 25 -b 500000 -o - | ffmpeg -i - -vcodec copy -acodec aac -f flv rtmp://10.0.0.1/live/my-stream
+
+# rtmpdump
+rtmpdump -r rtmp://23.20.92.118/live/my-stream --quiet | /Applications/VLC.app/Contents/MacOS/VLC -
+
+# netcat
+sudo apt-get install mplayer netcat
+nc -1 -p 5001 | mplayer -fps 31 -cache 1024
+nc -l -p 5001 | mplayer -fps 31 -cache 1024
