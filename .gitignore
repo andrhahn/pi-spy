@@ -1,5 +1,11 @@
+node_modules
+dist
+
+package-lock.json
+
 *.iml
 .idea
+
 app_config
 credentials
 .pyc

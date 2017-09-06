@@ -1,0 +1,26 @@
+{
+  "name": "appy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc",
+    "start": "tsc && node dist/app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "bonjour": "^3.5.0",
+    "cors": "^2.8.4",
+    "express": "^4.15.4",
+    "mongoose": "^4.11.10",
+    "morgan": "^1.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.26",
+    "nodemon": "^1.12.0",
+    "typescript": "^2.5.2"
+  }
+}
