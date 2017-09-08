@@ -1,4 +1,4 @@
-module.exports.auth = function (req, res, next) {
+export = (req, res, next) => {
   console.log(`x-user-name header: ${req.header('x-user-name')}`);
   console.log(`x-user-pw header: ${req.header('x-user-pw')}`);
 
