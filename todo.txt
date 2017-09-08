@@ -21,7 +21,13 @@ Todo:
 - save network name in device schema
 - create user schema
 - save user id in device schema
-- install nginx on the pi
+- create manual entries in the table for now
+- create GET /devices/<device-guid>
+- create POST /devices/<device-guid>/start-live-feed
+- create POST /devices/<device-guid>/stop-live-feed
+
+- create public site where use can sign up and key in camera guid (last)
+- add auth
 
 Questions:
 -----------
