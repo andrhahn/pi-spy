@@ -16,7 +16,7 @@ tar -zxvf nginx-1.13.4.tar.gz
 sudo apt-get install -y unzip
 unzip master.zip
 cd nginx-1.13.4
- ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-debug
+./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-debug
 make
 sudo make install
 sudo wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O /etc/init.d/nginx
