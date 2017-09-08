@@ -16,8 +16,6 @@ Architecture:
 
 Todo:
 -----
-- create public site where use can sign up and key in camera guid
-- add an api /register-device endpoint
 - save network name in device schema
 - create user schema
 - save user id in device schema
@@ -26,5 +24,6 @@ Todo:
 - create POST /devices/<device-guid>/start-live-feed
 - create POST /devices/<device-guid>/stop-live-feed
 
-- create public site where use can sign up and key in camera guid (last)
+- create POST /register-device
+- create public spa where use can sign up and key in camera guid (last)
 - add auth
