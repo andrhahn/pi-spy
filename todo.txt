@@ -6,7 +6,7 @@ other?
 Results:
 - depending on the approach of above, we might need to use mongo vs sql lite
 
-Solution 1:
+Architecture:
 -----------
 - build this to work on a local network only for now
 - in the future, public access would occur by proxying requests to the vps via tinc to the rpi rtmp url
@@ -28,11 +28,3 @@ Todo:
 
 - create public site where use can sign up and key in camera guid (last)
 - add auth
-
-Questions:
------------
-- do I need a sql lite db on the pi?  I don't think so.
-
-rpi:
-----
-sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev
