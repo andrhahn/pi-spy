@@ -7,7 +7,7 @@ ubuntu: setup
 - open ports   # todo...
 
 
-ubuntu: install nginx:
+ubuntu/rpi: install nginx:
 ----------------------
 sudo apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev
 wget http://nginx.org/download/nginx-1.13.4.tar.gz
@@ -27,13 +27,12 @@ sudo mkdir /tmp/dash
 sudo chmod -R 777 /tmp/hls
 sudo chmod -R 777 /tmp/dash
 sudo cp ~/nginx-rtmp-module-master/stat.xsl /usr/local/nginx/html/
-
+<copy over nginx.conf>
 
 ubuntu: install node js:
 ------------------------
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
-
 
 ubuntu: install tinc:
 ---------------------
@@ -56,18 +55,15 @@ sudo nano /etc/tinc/myvpn/tinc-down
 	ifconfig $INTERFACE down
 sudo chmod 755 /etc/tinc/myvpn/tinc-*
 
-
 rpi: install tinc:
 ------------------
 sudo mkdir -p /etc/tinc/myvpn/hosts
 sudo nano /etc/tinc/myvpn/tinc.conf
 
-
 commands:
 ---------
 sudo service nginx start
 sudo service nginx stop
-
 
 locations/files:
 ----------------
@@ -75,8 +71,6 @@ nginx dir: /usr/local/nginx
 nginx conf dir: /usr/local/nginx/conf
 nginx logs dir: /usr/local/nginx/logs
 
-
 links:
 ------
 stat: http://<ip address>/stat
-

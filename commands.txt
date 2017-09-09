@@ -41,7 +41,8 @@ raspivid -o - -t 0 -vf -hf -fps 10 -b 500000 | ffmpeg -re -ar 44100 -ac 2 -acode
 raspivid -t 999999 -o - | nc 10.50.0.57 5001
 
 # rtmp
-rtmp://23.20.92.118/live/my-stream
+rtmp://23.20.92.118/live/my-stream (lightsail)
+rtmp://10.200.105.123/live/my-stream (rpi - ali)
 
 # ffmpeg
 sudo apt-get install ffmpeg

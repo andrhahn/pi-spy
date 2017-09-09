@@ -1,26 +1,13 @@
-camera -> vps <- iphone/browser     - high bandwidth cost, simple one point of contaact, may or may not require tinc
-camera -> iphone/browser     - each camera would run an rtmp server, vps would redirect browser to a particular camera? adv: each camera continually publishes a single stream
-camera -> hub <- iphone/browser     - low bandwidth cost, extra piece of hardware, would still need to talk to a central server
-other?
-
-Results:
-- depending on the approach of above, we might need to use mongo vs sql lite
-
 Architecture:
------------
-- build this to work on a local network only for now
+-------------
+- build this to work on a local network initially
 - in the future, public access would occur by proxying requests to the vps via tinc to the rpi rtmp url
 - each camera runs it's own rtmp server
-- user can use public site to get list of host names and then view those rtmp streams directly from browser
+- user can use public site spa which will retrieve list of rtmp host names and embed those directly in browser
 - camera would have api to control streaming, etc.
 
 Todo:
 -----
-- save network name in device schema
-- create user schema
-- save user id in device schema
-- create manual entries in the table for now
-- create GET /devices/<device-guid>
 - create POST /devices/<device-guid>/start-live-feed
 - create POST /devices/<device-guid>/stop-live-feed
 
