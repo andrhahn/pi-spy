@@ -10,6 +10,11 @@ Todo:
 -----
 - create POST /devices/<device-guid>/start-live-feed
 - create POST /devices/<device-guid>/stop-live-feed
+- add appropriate scripts
+
+- create GET /cameras (to load urls in web page)
+- change HTML file to come from SPA and use dynamic configs
+
 
 - create POST /register-device
 - create public spa where use can sign up and key in camera guid (last)
