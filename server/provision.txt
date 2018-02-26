@@ -1,13 +1,17 @@
-ubuntu: setup
----------------
+create lightsail (ubuntu):
+--------------------------
 - create lightsail ubuntu instance
 - create static ip
 - download ssh key and place in ~/.aws (with chmod 400 on the file)
 - sudo apt-get update -y
-- open ports   # todo...
+- sudo apt-get upgrade -y
+- open ports: 1935 (nginx rtmp)
+- test ssh: ssh ubuntu@34.197.186.122 -i ~/.aws/LightsailDefaultPrivateKey-us-east-1.pem
 
-ubuntu: install nginx:
-----------------------
+provision nginx w/rtmp (ubuntu):
+--------------------------------
+article: https://obsproject.com/forum/resources/how-to-set-up-your-own-private-rtmp-server-using-nginx.50/
+
 sudo apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev
 wget http://nginx.org/download/nginx-1.13.4.tar.gz
 wget https://github.com/arut/nginx-rtmp-module/archive/master.zip
@@ -15,9 +19,10 @@ tar -zxvf nginx-1.13.4.tar.gz
 sudo apt-get install -y unzip
 unzip master.zip
 cd nginx-1.13.4
- ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-debug
+./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-debug
 make
 sudo make install
+
 sudo wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O /etc/init.d/nginx
 sudo chmod +x /etc/init.d/nginx
 sudo update-rc.d nginx defaults
@@ -26,6 +31,13 @@ sudo mkdir /tmp/dash
 sudo chmod -R 777 /tmp/hls
 sudo chmod -R 777 /tmp/dash
 sudo cp ~/nginx-rtmp-module-master/stat.xsl /usr/local/nginx/html/
+
+
+publish rtmp to:
+----------------
+publish to: rtmp://34.197.186.122/live  with path/key: my-stream
+vlc path: rtmp://34.197.186.122/live/my-stream
+
 
 ubuntu: install node js:
 ------------------------

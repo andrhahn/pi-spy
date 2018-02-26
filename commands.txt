@@ -1,6 +1,5 @@
 # ssh commands
-ssh ubuntu@23.20.92.118 -i ~/.aws/LightsailDefaultPrivateKey-us-east-1.pem
-ssh ubuntu@34.233.40.114 -i ~/.aws/LightsailDefaultPrivateKey-us-east-1.pem
+ssh ubuntu@34.197.186.122 -i ~/.aws/LightsailDefaultPrivateKey-us-east-1.pem
 ssh pi@10.0.0.2
 
 # run client via ssh

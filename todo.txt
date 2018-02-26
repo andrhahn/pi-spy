@@ -8,6 +8,12 @@ Architecture:
 
 Todo:
 -----
+*updated 1-26-18 :)
+1. install nginx w/rtmp on amazon lightsail server
+2. publish rpi stream to lightsail server
+3. update scranthdaddy html page
+
+
 - create POST /devices/<device-guid>/start-live-feed
 - create POST /devices/<device-guid>/stop-live-feed
 - add appropriate scripts

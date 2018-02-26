@@ -13,7 +13,7 @@
 	<body>
 		<!-- 
 		<video id="my_video_1" class="video-js vjs-default-skin" controls preload="auto" width="640" height="268" data-setup='{}'>
-		    <source src="http://23.20.92.118/dash/my-stream.mpd" type="dash+xml">
+		    <source src="http://34.197.186.122/dash/my-stream.mpd" type="dash+xml">
 		</video> 
 
 		<script></script>
@@ -27,14 +27,14 @@
 			if (window.MediaSource) {
 				player.ready(function() {
 					player.src({ 
-						src: 'http://23.20.92.118/dash/my-stream.mpd', 
+						src: 'http://34.197.186.122/dash/my-stream.mpd',
 						type: 'application/dash+xml'
 					});
 				});
 			} else {
 				player.ready(function() {
 					player.src({ 
-						src: 'http://23.20.92.118/hls/my-stream.m3u8', 
+						src: 'http://34.197.186.122/hls/my-stream.m3u8',
 						type: 'application/x-mpegURL'
 					});
 				});

@@ -1,10 +1,6 @@
-ubuntu: setup
----------------
-- create lightsail ubuntu instance
-- create static ip
-- download ssh key and place in ~/.aws (with chmod 400 on the file)
-- sudo apt-get update -y
-- open ports   # todo...
+setup raspberry pi:
+-------------------
+sudo apt-get install ffmpeg
 
 
 ubuntu/rpi: install nginx:
