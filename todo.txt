@@ -11,7 +11,10 @@ Todo:
 *updated 1-26-18 :)
 1. install nginx w/rtmp on amazon lightsail server
 2. publish rpi stream to lightsail server
-3. update scranthdaddy html page
+3. test out using vlc player
+
+4.a. update lightsail nginx to use dash/hls
+4.b. update scranthdaddy html page - videojs
 
 
 - create POST /devices/<device-guid>/start-live-feed
