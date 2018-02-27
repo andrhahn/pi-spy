@@ -1,6 +1,6 @@
 setup raspberry pi:
 -------------------
-sudo apt-get install ffmpeg
+sudo apt-get install ffmpeg -y
 
 
 ubuntu/rpi: install nginx:
