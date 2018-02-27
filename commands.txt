@@ -43,6 +43,9 @@ raspivid -t 999999 -o - | nc 10.50.0.57 5001
 rtmp://23.20.92.118/live/my-stream (lightsail)
 rtmp://10.200.105.123/live/my-stream (rpi - ali)
 
+# ffplay
+ffplay -fflags nobuffer rtmp://34.197.186.122/live/my-stream
+
 # ffmpeg
 sudo apt-get install ffmpeg
 ffmpeg -re -f video4linux2 -i ~/drop.avi -vcodec libx264 -vprofile baseline -acodec aac -strict -2 -f flv rtmp://23.20.92.118/live/my-stream

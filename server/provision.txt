@@ -39,6 +39,11 @@ publish to: rtmp://34.197.186.122/live  with path/key: my-stream
 vlc path: rtmp://34.197.186.122/live/my-stream
 
 
+play with low latency:
+----------------------
+ffplay -fflags nobuffer rtmp://34.197.186.122/live/my-stream
+
+
 ubuntu: install node js:
 ------------------------
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
