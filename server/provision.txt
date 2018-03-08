@@ -35,13 +35,13 @@ sudo cp ~/nginx-rtmp-module-master/stat.xsl /usr/local/nginx/html/
 
 publish rtmp to:
 ----------------
-publish to: rtmp://34.197.186.122/live  with path/key: my-stream
-vlc path: rtmp://34.197.186.122/live/my-stream
+publish to: rtmp://34.197.186.122/live or rtmp://localhost/live  with path/key: my-stream
+vlc path: rtmp://34.197.186.122/live/my-stream or rtmp://10.200.105.129/live/my-stream
 
 
 play with low latency:
 ----------------------
-ffplay -fflags nobuffer rtmp://34.197.186.122/live/my-stream
+ffplay -fflags nobuffer rtmp://34.197.186.122/live/my-stream -or- ffplay -fflags nobuffer rtmp://ali.local/live/my-stream
 
 
 ubuntu: install node js:

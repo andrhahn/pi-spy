@@ -1,10 +1,39 @@
 setup raspberry pi:
 -------------------
+1. format sd card with raspbian stretch
+2. add ssh file and wpa_supplicant.conf file to boot partition (https://www.raspberrypi.org/forums/viewtopic.php?t=191252)
+3. plug in rpi to ethernet and power cables
+4. use fing to find ip address
+5. ssh into pi with username/password of pi/raspberry
+6. configure: sudo raspi-config
+	change hostname
+7. run the following:
+	sudo apt-get update
+	sudo apt-get upgrade
+	sudo apt-get dist-upgrade
+	sudo rpi-update
+	sudo reboot
+
+sudo apt-get install avahi-daemon
 sudo apt-get install ffmpeg -y
 
 
+wpa_supplicant.conf:
+--------------------
+country=US
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+    ssid="miso"
+    psk="sandeman1"
+}
+
+
 ubuntu/rpi: install nginx:
-----------------------
+-------------------------
+https://obsproject.com/forum/resources/how-to-set-up-your-own-private-rtmp-server-using-nginx.50/
+
 sudo apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev
 wget http://nginx.org/download/nginx-1.13.4.tar.gz
 wget https://github.com/arut/nginx-rtmp-module/archive/master.zip
@@ -15,6 +44,15 @@ cd nginx-1.13.4
 ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-debug
 make
 sudo make install
+
+start nginx:
+sudo /usr/local/nginx/sbin/nginx
+
+restart nginx:
+sudo /usr/local/nginx/sbin/nginx -s stop
+sudo /usr/local/nginx/sbin/nginx
+
+nginx service:
 sudo wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O /etc/init.d/nginx
 sudo chmod +x /etc/init.d/nginx
 sudo update-rc.d nginx defaults
@@ -25,33 +63,7 @@ sudo chmod -R 777 /tmp/dash
 sudo cp ~/nginx-rtmp-module-master/stat.xsl /usr/local/nginx/html/
 <copy over nginx.conf>
 
-ubuntu: install node js:
-------------------------
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-ubuntu: install tinc:
----------------------
-https://www.digitalocean.com/community/tutorials/how-to-install-tinc-and-set-up-a-basic-vpn-on-ubuntu-14-04
-sudo apt-get install -y tinc
-sudo mkdir -p /etc/tinc/myvpn/hosts
-sudo nano /etc/tinc/myvpn/tinc.conf
-	Name = andy
-	AddressFamily = ipv4
-	Interface = tun0
-sudo nano /etc/tinc/myvpn/hosts/andy
-	Address = 34.233.40.114
-	Subnet = 10.0.0.1/32
-sudo tincd -n myvpn -K4096
-sudo nano /etc/tinc/myvpn/tinc-up
-	#!/bin/sh
-	ifconfig $INTERFACE 10.0.0.1 netmask 255.255.255.0
-sudo nano /etc/tinc/myvpn/tinc-down
-	#!/bin/sh
-	ifconfig $INTERFACE down
-sudo chmod 755 /etc/tinc/myvpn/tinc-*
-
-rpi: install tinc:
+install tinc:
 ------------------
 sudo mkdir -p /etc/tinc/myvpn/hosts
 sudo nano /etc/tinc/myvpn/tinc.conf
