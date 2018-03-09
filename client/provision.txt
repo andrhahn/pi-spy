@@ -8,14 +8,18 @@ setup raspberry pi:
 6. configure: sudo raspi-config
 	change hostname
 7. run the following:
-	sudo apt-get update
-	sudo apt-get upgrade
-	sudo apt-get dist-upgrade
-	sudo rpi-update
+	sudo apt-get update -y
+	sudo apt-get upgrade -y
+	sudo apt-get dist-upgrade -y
+	sudo rpi-update -y
 	sudo reboot
 
-sudo apt-get install avahi-daemon
+sudo apt-get install avahi-daemon -y
 sudo apt-get install ffmpeg -y
+
+8. update .bashrc
+    sudo nano ~/.bashrc
+    alias ll='ls -al'
 
 
 wpa_supplicant.conf:
