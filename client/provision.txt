@@ -2,11 +2,12 @@ setup raspberry pi:
 -------------------
 1. format sd card with raspbian stretch
 2. add ssh file and wpa_supplicant.conf file to boot partition (https://www.raspberrypi.org/forums/viewtopic.php?t=191252)
-3. plug in rpi to ethernet and power cables
+3. plug in rpi
 4. use fing to find ip address
-5. ssh into pi with username/password of pi/raspberry
+5. ssh into pi with ip address and username/password of pi/raspberry
 6. configure: sudo raspi-config
-	change hostname
+	under network options, change hostname
+	under interfacing options, enable camera
 7. run the following:
 	sudo apt-get update -y
 	sudo apt-get upgrade -y
