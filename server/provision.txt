@@ -41,7 +41,7 @@ vlc path: rtmp://34.197.186.122/live/my-stream or rtmp://10.200.105.129/live/my-
 
 play with low latency:
 ----------------------
-ffplay -fflags nobuffer rtmp://34.197.186.122/live/my-stream -or- ffplay -fflags nobuffer rtmp://ali.local/live/my-stream
+ffplay -fflags nobuffer rtmp://10.200.105.198/live/my-stream
 
 
 ubuntu: install node js:

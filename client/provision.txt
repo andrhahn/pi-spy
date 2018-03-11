@@ -17,6 +17,7 @@ setup raspberry pi:
 
 sudo apt-get install avahi-daemon -y
 sudo apt-get install ffmpeg -y
+sudo apt-get install vlc -y
 
 8. update .bashrc
     sudo nano ~/.bashrc
