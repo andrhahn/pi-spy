@@ -1,20 +1,19 @@
 Architecture:
 -------------
 - build this to work on a local network initially
+- dont bother with dash or hls - just use rtmp/vlc
 - in the future, public access would occur by proxying requests to the vps via tinc to the rpi rtmp url
 - each camera runs it's own rtmp server
-- user can use public site spa which will retrieve list of rtmp host names and embed those directly in browser
-- camera would have api to control streaming, etc.
+
 
 Todo:
 -----
-*updated 1-26-18 :)
-1. install nginx w/rtmp on amazon lightsail server
-2. publish rpi stream to lightsail server
-3. test out using vlc player
+- focus on local network access for now
+- add ability to send commands to each of the servers
+- register each camera in centralized store (vps?)
 
-4.a. update lightsail nginx to use dash/hls
-4.b. update scranthdaddy html page - videojs
+
+- setup tinc for external access
 
 
 - create POST /devices/<device-guid>/start-live-feed
