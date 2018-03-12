@@ -23,6 +23,9 @@ sudo apt-get install vlc -y
     sudo nano ~/.bashrc
     alias ll='ls -al'
 
+9.update sudo rc.local
+    sudo nano /etc/rc.local
+    sudo /usr/local/nginx/sbin/nginx
 
 wpa_supplicant.conf:
 --------------------
